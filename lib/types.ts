@@ -17,6 +17,10 @@ export interface User {
     losses: number;
     draws: number;
   };
+  statusTag?: string;
+  winRate?: number;
+  finishes?: number;
+  knockouts?: number;
   preferredRuleset?: Ruleset;
   medicalNotes?: string;
   emergencyContact?: string;

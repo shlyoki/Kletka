@@ -14,6 +14,7 @@ body {
   color: var(--foreground);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100%;
+  letter-spacing: 0.01em;
 }
 
 a {
@@ -42,13 +43,28 @@ a {
 }
 
 .card {
-  @apply rounded-2xl bg-surface-muted/80 border border-white/5 shadow-glow;
+  @apply rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.45)];
+}
+
+.card-emphasis {
+  background: radial-gradient(120% 140% at 10% 10%, rgba(255, 59, 48, 0.28), rgba(17, 18, 28, 0.92));
+}
+
+.title-accent {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.4em] text-white/60;
+}
+
+.status-pill {
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;
 }
 
 .section-title {
-  @apply text-lg font-semibold tracking-wide uppercase text-white/80 mb-4 flex items-center gap-2;
+  @apply text-lg font-semibold tracking-wide uppercase text-white;
 }
 
+.muted-subtitle {
+  @apply text-sm text-white/50;
+}
 .badge {
   @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wide bg-white/10 text-white/80;
 }
