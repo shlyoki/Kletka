@@ -146,3 +146,21 @@ export default function useSWR<Data = unknown>(
     },
   };
 }
+
+export function useSWRConfig() {
+  return {
+    mutate: <Data = unknown>(
+      key: string,
+      value?: Mutator<Data>,
+      revalidate?: boolean | { revalidate?: boolean },
+    ) => {
+      const options =
+        typeof revalidate === 'object'
+          ? revalidate
+          : revalidate === undefined
+            ? {}
+            : { revalidate };
+      return mutate<Data>(key, value, options);
+    },
+  };
+}

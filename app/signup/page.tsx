@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/toast-provider';
+import { useSWRConfig } from 'swr';
 
 export default function SignupPage() {
   const router = useRouter();
   const { push } = useToast();
+  const { mutate } = useSWRConfig();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,6 +27,9 @@ export default function SignupPage() {
       if (!response.ok) {
         throw new Error(payload?.error ?? 'Unable to create account.');
       }
+      const sessionData = { user: payload?.user ?? null };
+      await mutate('/api/session', sessionData, false);
+      router.refresh();
       push({ title: 'Account created', description: 'Welcome! Finish onboarding to explore the league.' });
       router.push('/onboarding');
     } catch (error) {

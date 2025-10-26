@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { Role } from '@prisma/client';
-import { auth } from '@/lib/auth';
+import { auth, signIn } from '@/lib/auth';
 import { setUserRole, updateUserProfile } from '@/lib/user-store';
 
 export async function updateSessionRole(role: Role) {
@@ -11,6 +11,7 @@ export async function updateSessionRole(role: Role) {
     throw new Error('Only the owner can change roles.');
   }
   await setUserRole(session.user.id, role);
+  await signIn(session.user.id);
   await revalidatePath('/');
 }
 
@@ -29,5 +30,6 @@ export async function updateSessionIdentity({
     name,
     email,
   });
+  await signIn(session.user.id);
   await revalidatePath('/');
 }

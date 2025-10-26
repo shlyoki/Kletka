@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { randomUUID, randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto';
+import { randomUUID, randomBytes, pbkdf2Sync, timingSafeEqual, createHmac } from 'crypto';
 import { Role } from '@prisma/client';
 
 const DEFAULT_DB_PATH = process.env.VERCEL === '1'
@@ -13,6 +13,29 @@ const ITERATIONS = 120_000;
 const KEY_LENGTH = 32;
 const DIGEST = 'sha256';
 const SESSION_COOKIE = 'mfl-session';
+const SESSION_VERSION = 'v1';
+const SESSION_SECRET = process.env.MFL_SESSION_SECRET || 'mfl-insecure-session-secret';
+
+type SessionSnapshot = Pick<StoredUser, 'id' | 'name' | 'email' | 'role' | 'createdAt' | 'onboarded' | 'isOwner' | 'region' | 'gym'>;
+
+interface SessionPayload {
+  userId: string;
+  issuedAt: number;
+  nonce: string;
+  snapshot: SessionSnapshot;
+}
+
+function encodeBase64Url(value: string) {
+  return Buffer.from(value, 'utf8').toString('base64url');
+}
+
+function decodeBase64Url(value: string) {
+  return Buffer.from(value, 'base64url').toString('utf8');
+}
+
+function signPayload(payload: string) {
+  return createHmac('sha256', SESSION_SECRET).update(payload).digest('base64url');
+}
 
 export interface StoredSession {
   token: string;
@@ -214,41 +237,88 @@ export async function createUser({
 }
 
 export async function createSession(userId: string) {
-  const db = await readDatabase();
-  const token = randomUUID();
-  db.sessions = db.sessions.filter((session) => session.userId !== userId);
-  db.sessions.push({ token, userId, createdAt: new Date().toISOString() });
-  await writeDatabase(db);
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new Error('User not found.');
+  }
+
+  const issuedAt = Date.now();
+  const payload: SessionPayload = {
+    userId: user.id,
+    issuedAt,
+    nonce: randomUUID(),
+    snapshot: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      onboarded: Boolean(user.onboarded),
+      isOwner: Boolean(user.isOwner),
+      region: user.region,
+      gym: user.gym,
+    },
+  };
+
+  const encodedPayload = encodeBase64Url(JSON.stringify(payload));
+  const signature = signPayload(encodedPayload);
+  const token = `${SESSION_VERSION}.${encodedPayload}.${signature}`;
+
+  await persistSessionRecord({ token, userId: user.id, createdAt: new Date(issuedAt).toISOString() });
+
   return token;
 }
 
 export async function getSession(token: string) {
-  const db = await readDatabase();
-  const session = db.sessions.find((item) => item.token === token);
-  if (!session) {
+  const [version, encodedPayload, signature] = token.split('.');
+  if (version !== SESSION_VERSION || !encodedPayload || !signature) {
     return undefined;
   }
-  const user = db.users.find((item) => item.id === session.userId);
+
+  let decodedPayload: SessionPayload;
+  try {
+    const expectedSignature = signPayload(encodedPayload);
+    const provided = Buffer.from(signature, 'base64url');
+    const expected = Buffer.from(expectedSignature, 'base64url');
+    if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+      return undefined;
+    }
+    decodedPayload = JSON.parse(decodeBase64Url(encodedPayload)) as SessionPayload;
+  } catch {
+    return undefined;
+  }
+
+  const persistedUser = await getUserById(decodedPayload.userId);
+  const user =
+    persistedUser ?? {
+      id: decodedPayload.snapshot.id,
+      name: decodedPayload.snapshot.name,
+      email: decodedPayload.snapshot.email,
+      passwordHash: '',
+      role: decodedPayload.snapshot.role,
+      createdAt: decodedPayload.snapshot.createdAt ?? new Date(decodedPayload.issuedAt).toISOString(),
+      onboarded: decodedPayload.snapshot.onboarded,
+      isOwner: decodedPayload.snapshot.isOwner,
+      region: decodedPayload.snapshot.region,
+      gym: decodedPayload.snapshot.gym,
+    };
+
   if (!user) {
     return undefined;
   }
-  return { session, user };
+
+  return {
+    session: { token, userId: user.id, createdAt: new Date(decodedPayload.issuedAt).toISOString() },
+    user,
+  };
 }
 
 export async function deleteSession(token: string) {
-  const db = await readDatabase();
-  const nextSessions = db.sessions.filter((item) => item.token !== token);
-  if (nextSessions.length === db.sessions.length) {
-    return;
-  }
-  db.sessions = nextSessions;
-  await writeDatabase(db);
+  await removeSessionRecord((record) => record.token === token);
 }
 
 export async function deleteSessionsForUser(userId: string) {
-  const db = await readDatabase();
-  db.sessions = db.sessions.filter((session) => session.userId !== userId);
-  await writeDatabase(db);
+  await removeSessionRecord((record) => record.userId === userId);
 }
 
 export async function setUserRole(userId: string, role: Role) {
@@ -303,6 +373,50 @@ export async function listUsers() {
 }
 
 export async function listSessions() {
-  const db = await readDatabase();
-  return db.sessions;
+  try {
+    const db = await readDatabase();
+    return db.sessions;
+  } catch {
+    return [];
+  }
+}
+
+async function persistSessionRecord(record: StoredSession) {
+  try {
+    const db = await readDatabase();
+    db.sessions = db.sessions.filter((session) => session.userId !== record.userId);
+    db.sessions.push(record);
+    await writeDatabase(db);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException)?.code;
+    if (code && READ_ONLY_CODES.has(code)) {
+      preferMemory = true;
+      inMemoryDb = inMemoryDb ?? createSeed();
+      inMemoryDb.sessions = inMemoryDb.sessions.filter((session) => session.userId !== record.userId);
+      inMemoryDb.sessions.push(record);
+      return;
+    }
+    console.warn('Failed to persist session record', error);
+  }
+}
+
+async function removeSessionRecord(predicate: (record: StoredSession) => boolean) {
+  try {
+    const db = await readDatabase();
+    const nextSessions = db.sessions.filter((record) => !predicate(record));
+    if (nextSessions.length === db.sessions.length) {
+      return;
+    }
+    db.sessions = nextSessions;
+    await writeDatabase(db);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException)?.code;
+    if (code && READ_ONLY_CODES.has(code)) {
+      preferMemory = true;
+      inMemoryDb = inMemoryDb ?? createSeed();
+      inMemoryDb.sessions = inMemoryDb.sessions.filter((record) => !predicate(record));
+      return;
+    }
+    console.warn('Failed to remove session record', error);
+  }
 }

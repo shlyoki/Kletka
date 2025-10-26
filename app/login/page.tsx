@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/toast-provider';
+import { useSWRConfig } from 'swr';
 
 export default function LoginPage() {
   const router = useRouter();
   const { push } = useToast();
+  const { mutate } = useSWRConfig();
   const [form, setForm] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,6 +27,9 @@ export default function LoginPage() {
       if (!response.ok) {
         throw new Error(payload?.error ?? 'Invalid email or password.');
       }
+      const sessionData = { user: payload?.user ?? null };
+      await mutate('/api/session', sessionData, false);
+      router.refresh();
       push({ title: 'Welcome back', description: 'You are now signed in.' });
       if (!payload?.user?.onboarded) {
         router.push('/onboarding');
