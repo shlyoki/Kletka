@@ -9,9 +9,14 @@ export function FighterCard({ fighter }: FighterCardProps) {
   const record = fighter.record
     ? `${fighter.record.wins}-${fighter.record.losses}-${fighter.record.draws}`
     : undefined;
+  const numericId = Number.parseInt(fighter.id.replace(/[^0-9]/g, "")) || 0;
+  const animationDelay = (numericId % 6) * 0.35;
 
   return (
-    <article className="relative overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.35),rgba(16,16,24,0.95))] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
+    <article
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.35),rgba(16,16,24,0.95))] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_28px_55px_rgba(0,0,0,0.45)] animate-float-slow"
+      style={{ animationDelay: `${animationDelay}s` }}
+    >
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-wide text-white/50">{fighter.weightClass}</p>

@@ -8,8 +8,14 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const numericId = Number.parseInt(event.id.replace(/[^0-9]/g, "")) || 0;
+  const animationDelay = (numericId % 5) * 0.4;
+
   return (
-    <article className="relative overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.4),rgba(17,18,28,0.9))] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
+    <article
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.4),rgba(17,18,28,0.9))] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_30px_60px_rgba(0,0,0,0.45)] animate-float-medium"
+      style={{ animationDelay: `${animationDelay}s` }}
+    >
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-wide text-white/50">{event.visibility}</p>

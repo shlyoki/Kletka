@@ -25,7 +25,7 @@ export default function EventsPage() {
           <EventCard key={event.id} event={event} />
         ))}
       </section>
-      <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-black/25 px-6 py-5 text-sm text-white/60">
+      <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-black/25 px-6 py-5 text-sm text-white/60 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_45px_rgba(0,0,0,0.45)] animate-float-medium">
         <div>
           <p className="text-white">Need to announce a private card?</p>
           <p className="text-xs uppercase tracking-wide text-white/40">Share invite links with automatic waiver collection.</p>

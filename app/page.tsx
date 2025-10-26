@@ -74,7 +74,7 @@ export default function HomePage() {
   return (
     <div className="space-y-16">
       <section className="grid gap-6 xl:grid-cols-[1.7fr_1fr]">
-        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(160%_120%_at_10%_10%,rgba(255,59,48,0.45),rgba(11,13,24,0.92))] p-10 shadow-[0_40px_80px_rgba(0,0,0,0.45)]">
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(160%_120%_at_10%_10%,rgba(255,59,48,0.45),rgba(11,13,24,0.92))] p-10 shadow-[0_40px_80px_rgba(0,0,0,0.45)] animate-float-slow">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(59,130,246,0.25),transparent_55%)] mix-blend-screen" />
           <div className="absolute -top-32 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="relative flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
@@ -102,7 +102,7 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="w-full max-w-sm rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+            <div className="w-full max-w-sm rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur animate-float-medium animation-delay-2000">
               <header className="flex items-center justify-between text-xs uppercase tracking-wide text-white/60">
                 <span>Next event</span>
                 <span>{nextEvent.visibility}</span>
@@ -133,7 +133,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="space-y-6">
-          <div className="rounded-[28px] border border-white/10 bg-black/40 p-6 shadow-[0_25px_60px_rgba(0,0,0,0.35)] backdrop-blur">
+          <div className="rounded-[28px] border border-white/10 bg-black/40 p-6 shadow-[0_25px_60px_rgba(0,0,0,0.35)] backdrop-blur animate-float-medium animation-delay-4000">
             <header className="flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wide text-white/40">Compliance Snapshot</p>
@@ -157,7 +157,7 @@ export default function HomePage() {
             </dl>
             <p className="mt-4 text-xs text-white/50">Lock-ins release 24 hours before first bell once all checks complete.</p>
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-black/30 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+          <div className="rounded-[28px] border border-white/10 bg-black/30 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-transform duration-700 ease-out hover:-translate-y-2">
             <p className="text-xs uppercase tracking-wide text-white/40">Operations Tip</p>
             <h3 className="mt-2 text-lg font-semibold text-white">Share the fighter briefing</h3>
             <p className="mt-2 text-sm text-white/60">
@@ -183,7 +183,7 @@ export default function HomePage() {
             <Link
               key={action.title}
               href={action.href}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-black/35 p-6 transition hover:border-primary/50 hover:shadow-[0_25px_55px_rgba(0,0,0,0.4)]"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-black/35 p-6 transition-all duration-500 ease-out hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_25px_55px_rgba(0,0,0,0.4)]"
             >
               <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_0%_0%,rgba(255,59,48,0.25),transparent)] opacity-0 transition group-hover:opacity-100" />
               <action.icon className="relative h-6 w-6 text-primary" />

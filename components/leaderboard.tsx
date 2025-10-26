@@ -15,7 +15,7 @@ interface LeaderboardProps {
 
 export function Leaderboard({ title, entries }: LeaderboardProps) {
   return (
-    <section className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
+    <section className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 shadow-[0_20px_45px_rgba(0,0,0,0.35)] transition-transform duration-700 ease-out hover:-translate-y-2 hover:shadow-[0_28px_55px_rgba(0,0,0,0.45)] animate-float-medium">
       <header className="flex items-center justify-between border-b border-white/10 px-6 py-5">
         <div>
           <p className="text-xs uppercase tracking-wide text-white/40">Rankings</p>
@@ -35,7 +35,11 @@ export function Leaderboard({ title, entries }: LeaderboardProps) {
           <span className="text-right">Streak</span>
         </div>
         {entries.map((entry, index) => (
-          <div key={entry.fighter.id} className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] items-center gap-4 px-6 py-4 text-sm text-white/80">
+          <div
+            key={entry.fighter.id}
+            className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] items-center gap-4 px-6 py-4 text-sm text-white/80 transition-all duration-500 ease-out hover:bg-white/5 animate-float-slow"
+            style={{ animationDelay: `${index * 0.2}s` }}
+          >
             <span className="text-lg font-bold text-primary/80">{index + 1}</span>
             <div>
               <p className="font-semibold text-white">{entry.fighter.name}</p>

@@ -7,8 +7,14 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ user }: ProfileCardProps) {
+  const numericId = Number.parseInt(user.id.replace(/[^0-9]/g, "")) || 0;
+  const animationDelay = (numericId % 5) * 0.45;
+
   return (
-    <article className="overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.35),rgba(16,16,24,0.95))] p-8 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
+    <article
+      className="overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(140%_120%_at_0%_0%,rgba(255,59,48,0.35),rgba(16,16,24,0.95))] p-8 shadow-[0_20px_45px_rgba(0,0,0,0.35)] transition-all duration-600 ease-out hover:-translate-y-2 hover:shadow-[0_28px_55px_rgba(0,0,0,0.45)] animate-float-medium"
+      style={{ animationDelay: `${animationDelay}s` }}
+    >
       <div className="flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-2xl font-semibold uppercase text-white">
