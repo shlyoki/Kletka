@@ -24,13 +24,13 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type IconComponent = typeof HomeModernIcon;
 
-const navItems: Array<{ href: string; label: string; icon: IconComponent }> = [
+const navItems: Array<{ href: string; label: string; icon: IconComponent; ownerOnly?: boolean }> = [
   { href: '/', label: 'Home', icon: HomeModernIcon },
   { href: '/events', label: 'Events', icon: CalendarDaysIcon },
   { href: '/fighters', label: 'Fighters', icon: UsersIcon },
   { href: '/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
   { href: '/community', label: 'Community', icon: MegaphoneIcon },
-  { href: '/organizer/analytics', label: 'Analytics', icon: ChartBarIcon },
+  { href: '/organizer/analytics', label: 'Analytics', icon: ChartBarIcon, ownerOnly: true },
   { href: '/messages', label: 'Messages', icon: ChatBubbleLeftIcon },
   { href: '/media', label: 'Media', icon: FilmIcon },
 ];
@@ -80,21 +80,23 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           </div>
         </div>
         <ul className="space-y-2">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-            return (
-              <li key={item.href}>
-                <NavLink
-                  href={item.href}
-                  onNavigate={onNavigate}
-                  active={isActive}
-                  icon={item.icon}
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            );
-          })}
+          {navItems
+            .filter((item) => !item.ownerOnly || Boolean(activeUser?.isOwner))
+            .map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+              return (
+                <li key={item.href}>
+                  <NavLink
+                    href={item.href}
+                    onNavigate={onNavigate}
+                    active={isActive}
+                    icon={item.icon}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              );
+            })}
         </ul>
       </div>
       <div className="space-y-4">

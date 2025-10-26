@@ -34,6 +34,27 @@ interface MockDatabase {
   sessions: StoredSession[];
 }
 
+let inMemoryDb: MockDatabase | null = null;
+let preferMemory = false;
+
+function createSeed(): MockDatabase {
+  return {
+    users: [createDefaultOwner()],
+    sessions: [],
+  };
+}
+
+function normalizeDatabase(data: MockDatabase): MockDatabase {
+  return {
+    ...data,
+    users: data.users.map((user) => ({
+      ...user,
+      onboarded: Boolean(user.onboarded),
+      isOwner: Boolean(user.isOwner),
+    })),
+  };
+}
+
 export function getSessionCookieName() {
   return SESSION_COOKIE;
 }
@@ -55,33 +76,77 @@ function createDefaultOwner(): StoredUser {
 }
 
 async function ensureDatabase() {
+  if (preferMemory) {
+    if (!inMemoryDb) {
+      inMemoryDb = createSeed();
+    }
+    return;
+  }
+
   try {
     await fs.access(DB_PATH);
   } catch {
-    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-    const seed: MockDatabase = {
-      users: [createDefaultOwner()],
-      sessions: [],
-    };
-    await fs.writeFile(DB_PATH, JSON.stringify(seed, null, 2), 'utf8');
+    try {
+      await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+      const seed = createSeed();
+      await fs.writeFile(DB_PATH, JSON.stringify(seed, null, 2), 'utf8');
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException)?.code;
+      if (code === 'EROFS' || code === 'EACCES') {
+        preferMemory = true;
+        if (!inMemoryDb) {
+          inMemoryDb = createSeed();
+        }
+        return;
+      }
+      throw error;
+    }
   }
 }
 
 async function readDatabase(): Promise<MockDatabase> {
   await ensureDatabase();
-  const raw = await fs.readFile(DB_PATH, 'utf8');
-  const parsed = JSON.parse(raw) as MockDatabase;
-  parsed.users = parsed.users.map((user) => ({
-    ...user,
-    onboarded: Boolean(user.onboarded),
-    isOwner: Boolean(user.isOwner),
-  }));
-  return parsed;
+
+  if (preferMemory) {
+    inMemoryDb = inMemoryDb ?? createSeed();
+    const snapshot = JSON.parse(JSON.stringify(inMemoryDb)) as MockDatabase;
+    return normalizeDatabase(snapshot);
+  }
+
+  try {
+    const raw = await fs.readFile(DB_PATH, 'utf8');
+    const parsed = JSON.parse(raw) as MockDatabase;
+    return normalizeDatabase(parsed);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException)?.code;
+    if (code === 'ENOENT' || code === 'EROFS' || code === 'EACCES') {
+      preferMemory = true;
+      inMemoryDb = inMemoryDb ?? createSeed();
+      const snapshot = JSON.parse(JSON.stringify(inMemoryDb)) as MockDatabase;
+      return normalizeDatabase(snapshot);
+    }
+    throw error;
+  }
 }
 
 async function writeDatabase(data: MockDatabase) {
-  await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-  await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+  if (preferMemory) {
+    inMemoryDb = JSON.parse(JSON.stringify(data)) as MockDatabase;
+    return;
+  }
+
+  try {
+    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException)?.code;
+    if (code === 'EROFS' || code === 'EACCES') {
+      preferMemory = true;
+      inMemoryDb = JSON.parse(JSON.stringify(data)) as MockDatabase;
+      return;
+    }
+    throw error;
+  }
 }
 
 export function hashPassword(password: string): string {

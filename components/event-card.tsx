@@ -62,8 +62,11 @@ export function EventCard({ event }: EventCardProps) {
           <p>RSVP {event.attendees}/{event.rsvpLimit}</p>
           <p>Minimum age {event.minAge} • Waiver {event.waiverRequired ? "required" : "optional"}</p>
         </div>
-        <Link href={`/events/${event.id}`} className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 font-semibold text-white transition hover:bg-white/20">
-          Open
+        <Link
+          href={`/events/${event.id}`}
+          className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 font-semibold text-white transition hover:bg-white/20"
+        >
+          View fight card
         </Link>
       </footer>
     </article>

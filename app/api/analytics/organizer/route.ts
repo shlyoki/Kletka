@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (user.role !== Role.ORGANIZER) {
+  if (user.role !== Role.ORGANIZER || !user.isOwner) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { searchParams } = new URL(req.url);

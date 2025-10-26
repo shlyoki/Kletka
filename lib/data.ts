@@ -113,7 +113,7 @@ export const users: User[] = [
 
 export const events: Event[] = [
   {
-    id: "e1",
+    id: "event-1",
     title: "Knockout Kings – Boxing Night",
     date: "2024-04-22",
     time: "19:00",
@@ -134,7 +134,7 @@ export const events: Event[] = [
     featuredBoutId: "b1"
   },
   {
-    id: "e2",
+    id: "event-2",
     title: "Grappling Showcase",
     date: "2024-04-29",
     time: "17:00",
@@ -154,7 +154,7 @@ export const events: Event[] = [
     organizerId: "u1"
   },
   {
-    id: "e3",
+    id: "event-3",
     title: "Friday Night Fights Vol. 1",
     date: "2024-05-10",
     time: "20:00",
@@ -176,7 +176,7 @@ export const events: Event[] = [
 export const bouts: Bout[] = [
   {
     id: "b1",
-    eventId: "e1",
+    eventId: "event-1",
     order: 1,
     weightClass: "Lightweight",
     rounds: 3,
@@ -192,7 +192,7 @@ export const bouts: Bout[] = [
   },
   {
     id: "b2",
-    eventId: "e3",
+    eventId: "event-3",
     order: 2,
     weightClass: "Welterweight",
     rounds: 3,
@@ -224,7 +224,7 @@ export const notifications: Notification[] = [
     message: "Warehouse Warriors 5 check-in opens in 2 hours.",
     type: "checkin",
     date: "2024-03-22",
-    link: "/events/e1"
+    link: "/events/event-1"
   },
   {
     id: "n3",
@@ -238,7 +238,7 @@ export const notifications: Notification[] = [
 export const media: MediaAsset[] = [
   {
     id: "m1",
-    eventId: "e1",
+    eventId: "event-1",
     boutId: "b1",
     uploaderId: "u5",
     type: "photo",
@@ -248,7 +248,7 @@ export const media: MediaAsset[] = [
   },
   {
     id: "m2",
-    eventId: "e1",
+    eventId: "event-1",
     uploaderId: "u5",
     type: "video",
     url: "/media/b2-spinning-backfist.mp4",

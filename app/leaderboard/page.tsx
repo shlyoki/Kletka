@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import {
@@ -231,8 +232,13 @@ export default function LeaderboardPage() {
                     {(filters.page - 1) * filters.pageSize + index + 1}
                   </td>
                   <td className="px-4 py-3 text-white">
-                    <div className="font-semibold">{row.name}</div>
-                    {row.nickname && <div className="text-xs text-white/40">“{row.nickname}”</div>}
+                    <Link
+                      href={`/fighters/${row.id}`}
+                      className="group block"
+                    >
+                      <div className="font-semibold transition group-hover:text-primary">{row.name}</div>
+                      {row.nickname && <div className="text-xs text-white/40">“{row.nickname}”</div>}
+                    </Link>
                   </td>
                   <td className="px-4 py-3">{row.gym ?? '—'}</td>
                   <td className="px-4 py-3">{row.region ?? '—'}</td>
