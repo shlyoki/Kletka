@@ -1,0 +1,34 @@
+name: Feature Request
+description: Suggest an idea for improving MMA Friends League.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an enhancement!
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Quick description of the idea.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this useful? Who benefits?
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Outline how you imagine the feature working.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: input
+    id: additional
+    attributes:
+      label: Additional context

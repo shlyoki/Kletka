@@ -1,0 +1,6 @@
+# Default owners
+* @mma-friends-league/maintainers
+
+# App routes
+/app/ @mma-friends-league/frontend
+/prisma/ @mma-friends-league/backend
