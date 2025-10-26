@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-[#060608] text-white">
-        <div className="relative min-h-screen overflow-hidden lg:grid lg:grid-cols-[18rem_1fr]">
+        <div className="relative min-h-screen lg:grid lg:grid-cols-[18rem_1fr] lg:items-start">
           <AuroraBackground />
           <aside className="relative hidden border-r border-white/5 bg-[radial-gradient(circle_at_top,_rgba(255,59,48,0.35),_rgba(11,11,15,0.95))] lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto">
             <Sidebar />
