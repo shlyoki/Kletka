@@ -21,7 +21,8 @@
       "@/prisma/*": ["./prisma/*"],
       "@prisma/client": ["./stubs/prisma-client"],
       "swr": ["./stubs/swr"],
-      "zod": ["./stubs/zod"]
+      "zod": ["./stubs/zod"],
+      "recharts": ["./stubs/recharts"]
     },
     "plugins": [{ "name": "next" }]
   },

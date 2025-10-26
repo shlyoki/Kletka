@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import useSWR, { mutate } from 'swr';
+import { EventReviewStatus } from '@prisma/client';
 import { useToast } from '@/components/toast-provider';
-import { mutate } from 'swr';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface ReviewFormProps {
   eventId: string;
@@ -10,26 +13,61 @@ interface ReviewFormProps {
 
 export function ReviewForm({ eventId }: ReviewFormProps) {
   const { push } = useToast();
+  const { data: session } = useSWR('/api/session', fetcher);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [isPending, startTransition] = useTransition();
 
+  const listKey = `/api/events/${eventId}/reviews`;
+  const ratingKey = `/api/events/${eventId}/rating`;
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     startTransition(async () => {
+      const optimistic = {
+        id: `optimistic-${Date.now()}`,
+        rating,
+        comment,
+        status: EventReviewStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        user: {
+          id: session?.user?.id ?? 'current-user',
+          name: session?.user?.name ?? 'You',
+        },
+      };
+
+      mutate(
+        listKey,
+        (current: any) => {
+          const existing = current?.reviews ?? [];
+          const filtered = existing.filter((review: any) => review.user?.id !== optimistic.user.id);
+          const nextReviews = [optimistic, ...filtered];
+          return {
+            reviews: nextReviews,
+            total: Math.max(current?.total ?? nextReviews.length, nextReviews.length),
+            page: 1,
+            pageSize: current?.pageSize ?? 10,
+          };
+        },
+        { revalidate: false },
+      );
+
       const response = await fetch(`/api/events/${eventId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating, comment }),
       });
+
       if (!response.ok) {
         push({ title: 'Unable to submit review', description: 'Check your inputs or try again later.' });
+        mutate(listKey);
         return;
       }
+
       push({ title: 'Review submitted', description: 'Thank you for sharing feedback!' });
       setComment('');
-      mutate(`/api/events/${eventId}/reviews`);
-      mutate(`/api/events/${eventId}/rating`);
+      mutate(listKey);
+      mutate(ratingKey);
     });
   };
 

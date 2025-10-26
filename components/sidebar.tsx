@@ -1,29 +1,36 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import clsx from "clsx";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
 import {
   CalendarDaysIcon,
+  ChartBarIcon,
   ChatBubbleLeftIcon,
   FilmIcon,
   HomeModernIcon,
   IdentificationIcon,
   InboxStackIcon,
+  MegaphoneIcon,
   TrophyIcon,
-  UsersIcon
-} from "@heroicons/react/24/outline";
-import type { ComponentProps } from "react";
+  UsersIcon,
+} from '@heroicons/react/24/outline';
+import type { ComponentProps } from 'react';
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type IconComponent = typeof HomeModernIcon;
 
 const navItems: Array<{ href: string; label: string; icon: IconComponent }> = [
-  { href: "/", label: "Home", icon: HomeModernIcon },
-  { href: "/events", label: "Events", icon: CalendarDaysIcon },
-  { href: "/fighters", label: "Fighters", icon: UsersIcon },
-  { href: "/leaderboards", label: "Leaderboard", icon: TrophyIcon },
-  { href: "/messages", label: "Messages", icon: ChatBubbleLeftIcon },
-  { href: "/media", label: "Media", icon: FilmIcon }
+  { href: '/', label: 'Home', icon: HomeModernIcon },
+  { href: '/events', label: 'Events', icon: CalendarDaysIcon },
+  { href: '/fighters', label: 'Fighters', icon: UsersIcon },
+  { href: '/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
+  { href: '/community', label: 'Community', icon: MegaphoneIcon },
+  { href: '/organizer/analytics', label: 'Analytics', icon: ChartBarIcon },
+  { href: '/messages', label: 'Messages', icon: ChatBubbleLeftIcon },
+  { href: '/media', label: 'Media', icon: FilmIcon },
 ];
 
 interface SidebarProps {
@@ -32,6 +39,8 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname();
+  const { data } = useSWR('/api/session', fetcher);
+  const activeUser = data?.user;
 
   return (
     <nav className="flex h-full flex-col justify-between p-6">
@@ -48,44 +57,60 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           </div>
         </div>
         <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <NavLink
-                href={item.href}
-                onNavigate={onNavigate}
-                active={pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))}
-                icon={item.icon}
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            return (
+              <li key={item.href}>
+                <NavLink
+                  href={item.href}
+                  onNavigate={onNavigate}
+                  active={isActive}
+                  icon={item.icon}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            );
+          })}
         </ul>
       </div>
       <div className="space-y-4">
         <div className="rounded-3xl border border-white/10 bg-black/30 p-4 text-sm text-white/70">
           <div className="flex items-center gap-3">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/70 to-primary/30 text-sm font-semibold uppercase text-white">
-              NC
+              {(activeUser?.name ?? 'Guest')
+                .split(' ')
+                .map((part: string) => part[0] ?? '')
+                .join('')
+                .slice(0, 2) || 'GU'}
             </span>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-white">Nova Cruz</p>
-              <p className="text-xs uppercase tracking-wide text-white/40">Admin</p>
+              <p className="text-sm font-semibold text-white">{activeUser?.name ?? 'Guest user'}</p>
+              <p className="text-xs uppercase tracking-wide text-white/40">{(activeUser?.role ?? 'GUEST').toLowerCase()}</p>
             </div>
             <Link
               href="/profile/u1"
               className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary"
+              onClick={onNavigate}
             >
               View
             </Link>
           </div>
         </div>
         <div className="space-y-2 text-xs text-white/40">
-          <Link href="/safety" className="flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 transition hover:border-primary/40">
+          <Link
+            href="/safety"
+            className="flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 transition hover:border-primary/40"
+            onClick={onNavigate}
+          >
             <IdentificationIcon className="h-4 w-4" />
             Safety & Waivers
           </Link>
-          <Link href="/reports" className="flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 transition hover:border-primary/40">
+          <Link
+            href="/reports"
+            className="flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 transition hover:border-primary/40"
+            onClick={onNavigate}
+          >
             <InboxStackIcon className="h-4 w-4" />
             Incident Reports
           </Link>
@@ -107,10 +132,10 @@ function NavLink({ active, icon: Icon, onNavigate, ...props }: NavLinkProps) {
       {...props}
       onClick={onNavigate}
       className={clsx(
-        "group flex items-center gap-3 rounded-2xl border border-white/5 px-4 py-3 text-sm font-semibold transition",
+        'group flex items-center gap-3 rounded-2xl border border-white/5 px-4 py-3 text-sm font-semibold transition',
         active
-          ? "border-primary/60 bg-gradient-to-r from-primary/30 via-primary/10 to-transparent text-white shadow-glow"
-          : "text-white/60 hover:border-primary/30 hover:bg-white/5 hover:text-white"
+          ? 'border-primary/60 bg-gradient-to-r from-primary/30 via-primary/10 to-transparent text-white shadow-glow'
+          : 'text-white/60 hover:border-primary/30 hover:bg-white/5 hover:text-white',
       )}
     >
       <Icon className="h-5 w-5" />

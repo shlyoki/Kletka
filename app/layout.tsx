@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/sidebar';
 import { Header } from '@/components/header';
 import { AuroraBackground } from '@/components/aurora-background';
 import { AppToastProvider } from '@/components/toast-provider';
+import { OnboardingGate } from '@/components/onboarding-gate';
 import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </aside>
             <main className="relative flex min-h-screen flex-col bg-[linear-gradient(150deg,rgba(255,59,48,0.08),rgba(15,15,22,0.92))]">
               <Header />
+              <OnboardingGate />
               <div className="flex-1 px-4 pb-20 pt-12 sm:px-6 lg:px-12 xl:px-16">
                 <div className="mx-auto w-full max-w-7xl space-y-12">{children}</div>
               </div>

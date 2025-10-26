@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
 
 const chatChannels = new Map<string, Set<WebSocket>>();
+const typingPresence = new Map<string, Set<string>>();
 
 type WebSocketPairCtor = new () => { 0: WebSocket; 1: WebSocket };
 
@@ -12,6 +13,24 @@ function getChannel(eventId: string) {
     chatChannels.set(eventId, new Set());
   }
   return chatChannels.get(eventId)!;
+}
+
+function getTyping(eventId: string) {
+  if (!typingPresence.has(eventId)) {
+    typingPresence.set(eventId, new Set());
+  }
+  return typingPresence.get(eventId)!;
+}
+
+function broadcast(eventId: string, payload: any) {
+  const channel = getChannel(eventId);
+  for (const ws of channel) {
+    try {
+      ws.send(JSON.stringify(payload));
+    } catch (error) {
+      console.error('chat send failed', error);
+    }
+  }
 }
 
 export async function GET(
@@ -46,13 +65,33 @@ export async function POST(
   const client = pair[0];
   const server = pair[1];
   const channel = getChannel(params.eventId);
+  const typing = getTyping(params.eventId);
 
   (server as any).accept?.();
   channel.add(server);
 
   server.addEventListener('message', async (event: MessageEvent) => {
-    const body = String(event.data ?? '').slice(0, 500);
-    if (!body.trim()) return;
+    const raw = String(event.data ?? '');
+    try {
+      const payload = JSON.parse(raw);
+      if (payload?.type === 'typing') {
+        const userName = String(payload.user ?? '').trim();
+        if (userName) {
+          typing.add(userName);
+          broadcast(params.eventId, { type: 'typing', users: Array.from(typing) });
+          setTimeout(() => {
+            typing.delete(userName);
+            broadcast(params.eventId, { type: 'typing', users: Array.from(typing) });
+          }, 2500);
+        }
+        return;
+      }
+    } catch {
+      // fall through to treat as message text
+    }
+
+    const body = raw.slice(0, 500).trim();
+    if (!body) return;
     const message = await prisma.eventChatMessage.create({
       data: {
         eventId: params.eventId,
@@ -62,14 +101,7 @@ export async function POST(
       },
       include: { sender: true },
     });
-    const payload = JSON.stringify({ type: 'message', data: message });
-    for (const ws of channel) {
-      try {
-        ws.send(payload);
-      } catch (error) {
-        console.error('chat send failed', error);
-      }
-    }
+    broadcast(params.eventId, { type: 'message', data: message });
   });
 
   server.addEventListener('close', () => {

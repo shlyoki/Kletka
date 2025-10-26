@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { EventReviewStatus, Role } from '@prisma/client';
+import { EventReviewStatus } from '@prisma/client';
+import { isClean, sanitize } from '@/lib/profanity';
 
 const paginationSchema = z.object({
   status: z.nativeEnum(EventReviewStatus).optional(),
@@ -82,16 +83,22 @@ export async function POST(
   if (!allowed) {
     return NextResponse.json({ error: 'Must attend event before reviewing' }, { status: 403 });
   }
+  if (!isClean(parsed.data.comment)) {
+    return NextResponse.json({ error: 'Please remove profanity from your review.' }, { status: 400 });
+  }
+  const sanitizedComment = sanitize(parsed.data.comment);
   const review = await prisma.eventReview.upsert({
     where: { eventId_userId: { eventId: params.eventId, userId: session.user.id } },
     create: {
-      ...parsed.data,
+      rating: parsed.data.rating,
+      comment: sanitizedComment,
       eventId: params.eventId,
       userId: session.user.id,
       status: EventReviewStatus.PENDING,
     },
     update: {
-      ...parsed.data,
+      rating: parsed.data.rating,
+      comment: sanitizedComment,
       status: EventReviewStatus.PENDING,
     },
   });

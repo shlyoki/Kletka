@@ -7,6 +7,7 @@ import { Checklist } from '@/components/checklist';
 import { EventRating } from '@/components/event-rating';
 import { ReviewForm } from '@/components/review-form';
 import { ReviewList } from '@/components/review-list';
+import { EventChat } from '@/components/event-chat';
 import { auth } from '@/lib/auth';
 import { Role } from '@prisma/client';
 
@@ -48,7 +49,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
 
   return (
     <div className="space-y-10">
-      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
         <article className="card space-y-6 p-6">
           <header className="space-y-3">
             <p className="text-xs uppercase tracking-widest text-white/40">{event.visibility}</p>
@@ -124,7 +125,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           )}
         </div>
       </section>
-      <section className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+      <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
         <div className="card space-y-4 p-6">
           <header className="flex items-center justify-between">
             <div>
@@ -147,6 +148,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           )}
         </div>
       </section>
+      <EventChat eventId={event.id} currentUser={session?.user ?? null} />
     </div>
   );
 }

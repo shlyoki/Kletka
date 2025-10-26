@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
@@ -8,42 +8,42 @@ import {
   MapPinIcon,
   MegaphoneIcon,
   ShieldCheckIcon,
-  UserGroupIcon
-} from "@heroicons/react/24/outline";
-import { events, notifications, users } from "@/lib/data";
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import { events, notifications, users } from '@/lib/data';
 
 const quickActions = [
   {
-    title: "Launch new card",
-    description: "Set rules, bouts, and waivers in minutes.",
-    href: "/create-event",
-    icon: MegaphoneIcon
+    title: 'Launch new card',
+    description: 'Set rules, bouts, and waivers in minutes.',
+    href: '/create-event',
+    icon: MegaphoneIcon,
   },
   {
-    title: "Match fighters",
-    description: "Filter by class, record, and availability.",
-    href: "/matchmaking",
-    icon: UserGroupIcon
+    title: 'Match fighters',
+    description: 'Filter by class, record, and availability.',
+    href: '/matchmaking',
+    icon: UserGroupIcon,
   },
   {
-    title: "Safety checklist",
-    description: "Lock participation until gear is cleared.",
-    href: "/dashboard",
-    icon: ShieldCheckIcon
+    title: 'Safety checklist',
+    description: 'Lock participation until gear is cleared.',
+    href: '/safety',
+    icon: ShieldCheckIcon,
   },
   {
-    title: "Send update",
-    description: "Push bout reminders and judge assignments.",
-    href: "/messages",
-    icon: ChatBubbleOvalLeftEllipsisIcon
-  }
+    title: 'Visit analytics',
+    description: 'Review ROI and attendance trends.',
+    href: '/organizer/analytics',
+    icon: ClipboardDocumentCheckIcon,
+  },
 ];
 
 export default function HomePage() {
   const nextEvent = events[0];
   const otherEvents = events.slice(1);
   const topFighters = users
-    .filter((user) => user.role === "fighter")
+    .filter((user) => user.role === 'fighter')
     .sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0))
     .slice(0, 4);
 
@@ -95,10 +95,16 @@ export default function HomePage() {
                   <ArrowRightIcon className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/leaderboards"
+                  href="/leaderboard"
                   className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white/80"
                 >
-                  View Leaderboards
+                  View Leaderboard
+                </Link>
+                <Link
+                  href="/community"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white/80"
+                >
+                  Open forums
                 </Link>
               </div>
             </div>
@@ -109,7 +115,7 @@ export default function HomePage() {
               </header>
               <div className="mt-4 space-y-4">
                 <div>
-                  <p className="text-sm text-white/50">{new Date(nextEvent.date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</p>
+                  <p className="text-sm text-white/50">{new Date(nextEvent.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                   <h2 className="text-xl font-semibold text-white">{nextEvent.title}</h2>
                   <p className="text-xs text-white/50">{nextEvent.venue}</p>
                 </div>
@@ -161,10 +167,10 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-wide text-white/40">Operations Tip</p>
             <h3 className="mt-2 text-lg font-semibold text-white">Share the fighter briefing</h3>
             <p className="mt-2 text-sm text-white/60">
-              Send the bout-specific chat a final checklist two hours before call time to confirm hydration, wraps, and corners.
+              Drop the bout-specific chat a final checklist two hours before call time to confirm hydration, wraps, and corners.
             </p>
-            <Link href="/messages" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-              Jump to messages
+            <Link href="/community" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              Join forums
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
           </div>
@@ -175,7 +181,7 @@ export default function HomePage() {
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold text-white">Control actions</h2>
-            <p className="muted-subtitle">Quick links to manage fight nights, safety workflows, and communications.</p>
+            <p className="muted-subtitle">Quick links to manage fight nights, analytics, and communications.</p>
           </div>
         </header>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -221,7 +227,7 @@ export default function HomePage() {
                   <div className="flex flex-wrap gap-5 text-xs text-white/50">
                     <span className="inline-flex items-center gap-2">
                       <CalendarDaysIcon className="h-4 w-4" />
-                      {new Date(event.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })} • {event.time}
+                      {new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} • {event.time}
                     </span>
                     <span className="inline-flex items-center gap-2">
                       <MapPinIcon className="h-4 w-4" />
@@ -237,7 +243,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="text-[0.7rem] uppercase tracking-wide text-white/40">Waiver</p>
-                    <p className="text-sm font-semibold text-white">{event.waiverRequired ? "Required" : "Optional"}</p>
+                    <p className="text-sm font-semibold text-white">{event.waiverRequired ? 'Required' : 'Optional'}</p>
                   </div>
                   <Link
                     href={`/events/${event.id}`}
@@ -258,7 +264,7 @@ export default function HomePage() {
                 <p className="text-xs uppercase tracking-wide text-white/40">Fighter Spotlight</p>
                 <h3 className="text-lg font-semibold text-white">League Rankings</h3>
               </div>
-              <Link href="/leaderboards" className="text-xs font-semibold uppercase tracking-wide text-primary">
+              <Link href="/leaderboard" className="text-xs font-semibold uppercase tracking-wide text-primary">
                 Rankings
               </Link>
             </header>
@@ -308,13 +314,22 @@ export default function HomePage() {
               Export the full waiver log, capture digital signatures, and record emergency contacts in one tap. Compliance stays synced even when working offline at the venue entrance.
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-primary/60 hover:text-primary"
-          >
-            Review waivers
-            <ClipboardDocumentCheckIcon className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-primary/60 hover:text-primary"
+            >
+              Review waivers
+              <ClipboardDocumentCheckIcon className="h-4 w-4" />
+            </Link>
+            <Link
+              href={`/events/${nextEvent.id}#reviews`}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-primary/60 hover:text-primary"
+            >
+              Read feedback
+              <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

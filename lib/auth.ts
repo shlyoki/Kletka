@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { Role } from '@prisma/client';
 
 type SessionUser = {
@@ -11,15 +12,33 @@ type Session = {
   user: SessionUser;
 };
 
-const demoUser: SessionUser = {
+const demoDefaults: SessionUser = {
   id: 'user-organizer',
   name: 'Olivia Organizer',
   email: 'olivia@example.com',
-  role: Role.ORGANIZER,
+  role: Role.GUEST,
 };
 
+function parseRole(value: string | undefined): Role {
+  if (!value) return Role.GUEST;
+  const maybeRole = value.toUpperCase() as Role;
+  return Object.values(Role).includes(maybeRole) ? maybeRole : Role.GUEST;
+}
+
 export async function auth(): Promise<Session> {
-  return { user: demoUser };
+  const store = cookies();
+  const role = parseRole(store.get('demo-role')?.value);
+  const name = store.get('demo-name')?.value ?? demoDefaults.name;
+  const email = store.get('demo-email')?.value ?? demoDefaults.email;
+
+  return {
+    user: {
+      ...demoDefaults,
+      role,
+      name,
+      email,
+    },
+  };
 }
 
 export async function signIn() {
