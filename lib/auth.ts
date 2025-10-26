@@ -52,7 +52,6 @@ export async function auth(): Promise<Session> {
   }
   const result = await getSession(token);
   if (!result) {
-    cookies().delete(COOKIE_NAME);
     return { user: null };
   }
   return { user: toSessionUser(result.user) };
