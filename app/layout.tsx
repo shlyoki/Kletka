@@ -20,12 +20,12 @@ export default function RootLayout({
       <body className="bg-[#060608] text-white">
         <div className="relative min-h-screen overflow-hidden lg:grid lg:grid-cols-[18rem_1fr]">
           <AuroraBackground />
-          <aside className="relative hidden border-r border-white/5 bg-[radial-gradient(circle_at_top,_rgba(255,59,48,0.35),_rgba(11,11,15,0.95))] lg:block">
+          <aside className="relative hidden border-r border-white/5 bg-[radial-gradient(circle_at_top,_rgba(255,59,48,0.35),_rgba(11,11,15,0.95))] lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto">
             <Sidebar />
           </aside>
-          <main className="relative min-h-screen bg-[linear-gradient(150deg,rgba(255,59,48,0.08),rgba(15,15,22,0.92))]">
+          <main className="relative flex min-h-screen flex-col bg-[linear-gradient(150deg,rgba(255,59,48,0.08),rgba(15,15,22,0.92))]">
             <Header />
-            <div className="px-4 pb-20 pt-24 sm:px-6 lg:px-12 xl:px-16">
+            <div className="flex-1 px-4 pb-20 pt-12 sm:px-6 lg:px-12 xl:px-16">
               <div className="mx-auto w-full max-w-7xl space-y-12">
                 {children}
               </div>

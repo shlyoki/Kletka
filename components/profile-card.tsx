@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ShieldCheckIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import type { User } from "@/lib/types";
 
@@ -24,9 +25,12 @@ export function ProfileCard({ user }: ProfileCardProps) {
         </div>
         <div className="flex items-center gap-3">
           {user.verified && <ShieldCheckIcon className="h-6 w-6 text-emerald-400" />}
-          <button className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/20">
+          <Link
+            href={`/profile/${user.id}?edit=true`}
+            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/20"
+          >
             Edit Profile
-          </button>
+          </Link>
         </div>
       </div>
       <div className="mt-6 grid gap-4 text-sm text-white/70 md:grid-cols-2">

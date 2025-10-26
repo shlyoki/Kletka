@@ -216,19 +216,22 @@ export const notifications: Notification[] = [
     id: "n1",
     message: "Kai Rivera accepted matchup vs Lena Hart.",
     type: "match",
-    date: "2024-03-21"
+    date: "2024-03-21",
+    link: "/matchmaking"
   },
   {
     id: "n2",
     message: "Warehouse Warriors 5 check-in opens in 2 hours.",
     type: "checkin",
-    date: "2024-03-22"
+    date: "2024-03-22",
+    link: "/events/e1"
   },
   {
     id: "n3",
     message: "Judge Marcus Le submitted b1 scorecard.",
     type: "result",
-    date: "2024-03-22"
+    date: "2024-03-22",
+    link: "/bouts/b1"
   }
 ];
 

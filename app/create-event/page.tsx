@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
@@ -17,6 +18,21 @@ export default function CreateEventPage() {
   const [step, setStep] = useState(1);
   const [paid, setPaid] = useState(true);
   const [waiverRequired, setWaiverRequired] = useState(true);
+  const [feedback, setFeedback] = useState<null | { status: "draft" | "published"; message: string }>(null);
+
+  const handleSaveDraft = () => {
+    setFeedback({
+      status: "draft",
+      message: "Draft saved. We'll remind your staff to review before publishing."
+    });
+  };
+
+  const handlePublish = () => {
+    setFeedback({
+      status: "published",
+      message: "Event published! Share the invite link or QR code with your fighters and spectators."
+    });
+  };
 
   return (
     <div className="space-y-10">
@@ -43,9 +59,21 @@ export default function CreateEventPage() {
           </button>
         ))}
       </nav>
+      {feedback && (
+        <div
+          className={clsx(
+            "rounded-2xl border px-4 py-3 text-sm",
+            feedback.status === "published"
+              ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-200"
+              : "border-white/15 bg-white/5 text-white/70"
+          )}
+        >
+          {feedback.message}
+        </div>
+      )}
       {step === 1 && <StepDetails paid={paid} setPaid={setPaid} waiverRequired={waiverRequired} setWaiverRequired={setWaiverRequired} />}
       {step === 2 && <StepRules />}
-      {step === 3 && <StepPublish />}
+      {step === 3 && <StepPublish onPublish={handlePublish} onSaveDraft={handleSaveDraft} />}
     </div>
   );
 }
@@ -121,7 +149,12 @@ function StepRules() {
           <article key={ruleset.name} className="rounded-2xl border border-white/10 bg-surface-muted/60 p-4">
             <h3 className="text-base font-semibold text-white">{ruleset.name}</h3>
             <p className="text-xs text-white/50">{ruleset.defaults}</p>
-            <button className="mt-4 text-xs uppercase tracking-wide text-primary">Customize</button>
+            <Link
+              href={`/settings?section=rulesets&focus=${ruleset.name.toLowerCase()}`}
+              className="mt-4 inline-flex text-xs font-semibold uppercase tracking-wide text-primary"
+            >
+              Customize
+            </Link>
           </article>
         ))}
       </div>
@@ -137,7 +170,13 @@ function StepRules() {
   );
 }
 
-function StepPublish() {
+function StepPublish({
+  onSaveDraft,
+  onPublish
+}: {
+  onSaveDraft: () => void;
+  onPublish: () => void;
+}) {
   return (
     <section className="card space-y-6 p-6 text-sm text-white/70">
       <header className="space-y-2">
@@ -163,10 +202,18 @@ function StepPublish() {
         </article>
       </div>
       <div className="flex flex-wrap gap-3">
-        <button className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/70">
+        <button
+          type="button"
+          onClick={onSaveDraft}
+          className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:text-white"
+        >
           Save draft
         </button>
-        <button className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow">
+        <button
+          type="button"
+          onClick={onPublish}
+          className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow"
+        >
           Publish event
         </button>
       </div>

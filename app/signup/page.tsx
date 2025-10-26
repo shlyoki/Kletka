@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 const weightClasses = ["Flyweight", "Bantamweight", "Featherweight", "Lightweight", "Welterweight", "Middleweight", "Light Heavyweight", "Heavyweight"];
@@ -74,8 +76,20 @@ export default function SignupPage() {
       <div className="text-center text-xs text-white/50">
         Prefer single sign-on?
         <div className="mt-3 flex justify-center gap-3 text-sm">
-          <button className="rounded-full border border-white/20 px-4 py-2 text-white/70">Continue with Google</button>
-          <button className="rounded-full border border-white/20 px-4 py-2 text-white/70">Continue with Apple</button>
+          <button
+            type="button"
+            onClick={() => alert("Google sign-in is queued. Add your client ID in the auth settings to enable it.")}
+            className="rounded-full border border-white/20 px-4 py-2 text-white/70 transition hover:text-white"
+          >
+            Continue with Google
+          </button>
+          <button
+            type="button"
+            onClick={() => alert("Apple sign-in will activate once certificates are uploaded in settings.")}
+            className="rounded-full border border-white/20 px-4 py-2 text-white/70 transition hover:text-white"
+          >
+            Continue with Apple
+          </button>
         </div>
       </div>
     </div>

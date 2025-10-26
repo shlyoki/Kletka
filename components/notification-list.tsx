@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BellAlertIcon, CheckBadgeIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import type { Notification } from "@/lib/types";
 
@@ -30,7 +31,12 @@ export function NotificationList({ notifications }: NotificationListProps) {
                 <p className="font-medium text-white">{notification.message}</p>
                 <p className="text-xs text-white/40">{new Date(notification.date).toLocaleString()}</p>
               </div>
-              <button className="text-xs uppercase tracking-wide text-primary hover:text-primary/80">Open</button>
+              <Link
+                href={notification.link}
+                className="text-xs font-semibold uppercase tracking-wide text-primary transition hover:text-primary/80"
+              >
+                Open
+              </Link>
             </li>
           );
         })}

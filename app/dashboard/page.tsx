@@ -61,15 +61,27 @@ export default function DashboardPage() {
             <p className="text-xs text-white/50">Send judge honorariums, download scorecards, and reconcile tickets.</p>
           </header>
           <div className="grid gap-3 text-sm">
-            <button className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80">
+            <a
+              href="/downloads/results.csv"
+              download
+              className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80 transition hover:text-white"
+            >
               Export results CSV
-            </button>
-            <button className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80">
+            </a>
+            <a
+              href="/downloads/waiver-log.csv"
+              download
+              className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80 transition hover:text-white"
+            >
               Download waiver log
-            </button>
-            <button className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80">
+            </a>
+            <a
+              href="/downloads/payout-report.csv"
+              download
+              className="rounded-xl border border-white/10 bg-surface-muted/60 px-4 py-3 text-left text-white/80 transition hover:text-white"
+            >
               Stripe payout report
-            </button>
+            </a>
           </div>
         </article>
       </section>

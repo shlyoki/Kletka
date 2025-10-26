@@ -79,6 +79,7 @@ export interface Notification {
   message: string;
   type: "match" | "checkin" | "result" | "waiver";
   date: string;
+  link: string;
 }
 
 export interface MediaAsset {

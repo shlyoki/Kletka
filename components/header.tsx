@@ -21,8 +21,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 bg-[#060608]/60 shadow-[0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl">
-      <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-12 xl:px-16">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-[#060608]/75 shadow-[0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl">
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-12 xl:px-16">
         <div className="flex items-center gap-3">
           <button
             className="lg:hidden rounded-xl border border-white/10 p-2"

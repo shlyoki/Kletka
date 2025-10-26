@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MatchmakingFilter } from "@/components/matchmaking-filter";
 import { BoutCard } from "@/components/bout-card";
@@ -71,7 +72,12 @@ export default function MatchmakingPage() {
                     {fighter.weightClass} • {fighter.experienceLevel} • {fighter.availability}
                   </p>
                 </div>
-                <button className="text-xs uppercase tracking-wide text-primary">Offer bout</button>
+                <Link
+                  href={`/matchmaking/offer/${fighter.id}`}
+                  className="text-xs font-semibold uppercase tracking-wide text-primary transition hover:text-primary/80"
+                >
+                  Offer bout
+                </Link>
               </li>
             ))}
             {candidates.length === 0 && <p className="text-xs text-white/50">No fighters fit all filters. Try widening criteria.</p>}
