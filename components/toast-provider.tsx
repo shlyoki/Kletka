@@ -1,6 +1,5 @@
 'use client';
 
-import * as ToastPrimitive from '@radix-ui/react-toast';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 interface ToastMessage {
@@ -26,39 +25,48 @@ export function useToast() {
 export function AppToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const push = useCallback((toast: Omit<ToastMessage, 'id'>) => {
-    setToasts((prev) => [...prev, { id: Date.now(), ...toast }]);
-  }, []);
-
   const remove = useCallback((id: number) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
+
+  const push = useCallback(
+    (toast: Omit<ToastMessage, 'id'>) => {
+      const id = Date.now() + Math.floor(Math.random() * 1000);
+      setToasts((prev) => [...prev, { id, ...toast }]);
+      window.setTimeout(() => remove(id), 4000);
+    },
+    [remove]
+  );
 
   const value = useMemo(() => ({ push }), [push]);
 
   return (
     <ToastContext.Provider value={value}>
-      <ToastPrimitive.Provider swipeDirection="right">
-        {children}
+      {children}
+      <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 max-w-full flex-col gap-2">
         {toasts.map((toast) => (
-          <ToastPrimitive.Root
+          <div
             key={toast.id}
-            className="pointer-events-auto m-2 w-80 rounded-xl border border-white/10 bg-surface px-4 py-3 text-white shadow-lg"
-            open
-            onOpenChange={(open) => {
-              if (!open) remove(toast.id);
-            }}
+            className="pointer-events-auto rounded-xl border border-white/10 bg-surface/90 p-4 text-white shadow-lg backdrop-blur"
           >
-            <ToastPrimitive.Title className="text-sm font-semibold">{toast.title}</ToastPrimitive.Title>
-            {toast.description && (
-              <ToastPrimitive.Description className="mt-1 text-xs text-white/70">
-                {toast.description}
-              </ToastPrimitive.Description>
-            )}
-          </ToastPrimitive.Root>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold">{toast.title}</p>
+                {toast.description && (
+                  <p className="mt-1 text-xs text-white/70">{toast.description}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => remove(toast.id)}
+                className="text-xs uppercase tracking-wide text-white/60 transition hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         ))}
-        <ToastPrimitive.Viewport className="fixed bottom-4 right-4 z-50 flex flex-col gap-2" />
-      </ToastPrimitive.Provider>
+      </div>
     </ToastContext.Provider>
   );
 }

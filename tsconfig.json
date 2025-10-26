@@ -14,12 +14,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/components/*": ["./components/*"],
       "@/lib/*": ["./lib/*"],
       "@/app/*": ["./app/*"],
-      "@/prisma/*": ["./prisma/*"]
+      "@/prisma/*": ["./prisma/*"],
+      "@prisma/client": ["./stubs/prisma-client"],
+      "swr": ["./stubs/swr"],
+      "zod": ["./stubs/zod"]
     },
     "plugins": [{ "name": "next" }]
   },

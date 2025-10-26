@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -8,6 +10,12 @@ const nextConfig = {
         hostname: "images.unsplash.com"
       }
     ]
+  },
+  webpack: (config) => {
+    config.resolve.alias['@prisma/client'] = path.join(__dirname, 'stubs/prisma-client.ts');
+    config.resolve.alias['swr'] = path.join(__dirname, 'stubs/swr.ts');
+    config.resolve.alias['zod'] = path.join(__dirname, 'stubs/zod.ts');
+    return config;
   }
 };
 

@@ -50,14 +50,26 @@ export async function GET(req: Request) {
   });
 
   const aggregates = events.map((event) => {
-    const revenue = event.ticketSales.reduce((acc, sale) => acc + sale.price * sale.qty, 0);
-    const expenses = event.expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    const revenue = event.ticketSales.reduce(
+      (acc: number, sale: { price: number; qty: number }) => acc + sale.price * sale.qty,
+      0
+    );
+    const expenses = event.expenses.reduce(
+      (acc: number, expense: { amount: number }) => acc + expense.amount,
+      0
+    );
     const roi = expenses === 0 ? null : (revenue - expenses) / expenses;
-    const attendance = event.ticketSales.reduce((acc, sale) => acc + sale.qty, 0);
+    const attendance = event.ticketSales.reduce(
+      (acc: number, sale: { qty: number }) => acc + sale.qty,
+      0
+    );
     const checkIns = event.waivers.length;
     const noShowRate = attendance === 0 ? 0 : Math.max(attendance - checkIns, 0) / attendance;
     const uniqueFighters = new Set(
-      event.bouts.flatMap((bout) => [bout.redFighterId, bout.blueFighterId].filter(Boolean))
+      event.bouts.flatMap((bout: { redFighterId: string; blueFighterId: string }) => [
+        bout.redFighterId,
+        bout.blueFighterId,
+      ])
     ).size;
     return {
       id: event.id,
@@ -74,7 +86,7 @@ export async function GET(req: Request) {
   });
 
   const totals = aggregates.reduce(
-    (acc, item) => {
+    (acc: { revenue: number; expenses: number; attendance: number; checkIns: number; uniqueFighters: number }, item) => {
       acc.revenue += item.revenue;
       acc.expenses += item.expenses;
       acc.attendance += item.attendance;

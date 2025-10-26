@@ -14,6 +14,7 @@ export async function GET(
   if (stats.length === 0) {
     return NextResponse.json({ average: null, count: 0 });
   }
-  const { _avg, _count } = stats[0];
-  return NextResponse.json({ average: _avg.rating, count: _count.rating });
+  const { _avg, _count } = stats[0] as { _avg: { rating: number | null }; _count: { rating?: number; _all?: number } };
+  const count = _count.rating ?? _count._all ?? 0;
+  return NextResponse.json({ average: _avg.rating, count });
 }

@@ -44,7 +44,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   }
 
   const isOrganizer = session?.user?.id === event.organizerId;
-  const signedWaiver = event.waivers.find((waiver) => waiver.userId === session?.user?.id);
+  const signedWaiver = event.waivers.find((waiver: { userId: string; signedAt?: Date }) => waiver.userId === session?.user?.id);
 
   return (
     <div className="space-y-10">
@@ -116,7 +116,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           )}
         </header>
         <div className="grid gap-4 md:grid-cols-2">
-          {event.bouts.map((bout) => (
+          {event.bouts.map((bout: any) => (
             <BoutCard key={bout.id} bout={bout as any} />
           ))}
           {event.bouts.length === 0 && (

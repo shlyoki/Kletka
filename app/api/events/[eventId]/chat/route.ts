@@ -47,7 +47,7 @@ export async function POST(
   const server = pair[1];
   const channel = getChannel(params.eventId);
 
-  server.accept();
+  (server as any).accept?.();
   channel.add(server);
 
   server.addEventListener('message', async (event: MessageEvent) => {
