@@ -18,7 +18,8 @@ function scopesForRole(role: string) {
 
 export default async function CommunityPage() {
   const session = await auth();
-  const scopes = scopesForRole(session.user.role);
+  const role = session.user?.role ?? 'GUEST';
+  const scopes = scopesForRole(role);
   const threads = await prisma.thread.findMany({
     where: { OR: scopes.map((scope) => ({ roleScope: scope })) },
     include: {

@@ -71,7 +71,8 @@ export async function POST(
   { params }: { params: { eventId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json();
@@ -79,7 +80,7 @@ export async function POST(
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const allowed = await ensureAttendance(params.eventId, session.user.id);
+  const allowed = await ensureAttendance(params.eventId, user.id);
   if (!allowed) {
     return NextResponse.json({ error: 'Must attend event before reviewing' }, { status: 403 });
   }
@@ -88,12 +89,12 @@ export async function POST(
   }
   const sanitizedComment = sanitize(parsed.data.comment);
   const review = await prisma.eventReview.upsert({
-    where: { eventId_userId: { eventId: params.eventId, userId: session.user.id } },
+    where: { eventId_userId: { eventId: params.eventId, userId: user.id } },
     create: {
       rating: parsed.data.rating,
       comment: sanitizedComment,
       eventId: params.eventId,
-      userId: session.user.id,
+      userId: user.id,
       status: EventReviewStatus.PENDING,
     },
     update: {

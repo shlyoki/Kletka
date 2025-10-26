@@ -3,10 +3,9 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import useSWR from 'swr';
-import { Role } from '@prisma/client';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-const ALLOWED_ROUTES = new Set(['/onboarding', '/how-it-works']);
+const ALLOWED_ROUTES = new Set(['/onboarding', '/how-it-works', '/login', '/signup']);
 
 export function OnboardingGate() {
   const pathname = usePathname();
@@ -16,7 +15,7 @@ export function OnboardingGate() {
   useEffect(() => {
     if (!data?.user) return;
     if (ALLOWED_ROUTES.has(pathname)) return;
-    if (data.user.role === Role.GUEST) {
+    if (!data.user.onboarded) {
       router.replace('/onboarding');
     }
   }, [data, pathname, router]);

@@ -20,7 +20,8 @@ function scopesForRole(role: string) {
 
 export default async function ThreadDetailPage({ params }: { params: { threadId: string } }) {
   const session = await auth();
-  const scopes = scopesForRole(session.user.role);
+  const role = session.user?.role ?? 'GUEST';
+  const scopes = scopesForRole(role);
   const thread = await prisma.thread.findUnique({
     where: { id: params.threadId },
     include: {

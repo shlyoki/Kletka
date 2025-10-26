@@ -1,13 +1,14 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Bars3Icon, BellIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import useSWR from 'swr';
 import { Sidebar } from './sidebar';
 import { MobileNav } from './mobile-nav';
 import { RoleSwitcher } from './role-switcher';
+import { useToast } from './toast-provider';
 
 const breadcrumbs: Record<string, string> = {
   '/': 'Home',
@@ -28,16 +29,34 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { push } = useToast();
   const [open, setOpen] = useState(false);
-  const { data } = useSWR('/api/session', fetcher);
+  const { data, mutate } = useSWR('/api/session', fetcher);
 
   const userName = data?.user?.name ?? 'Guest';
   const userRole = data?.user?.role ?? 'GUEST';
+  const isAuthenticated = Boolean(data?.user);
 
   const breadcrumbLabel =
     breadcrumbs[pathname] ??
     Object.entries(breadcrumbs).find(([key]) => pathname.startsWith(key))?.[1] ??
     'Explore';
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Failed to sign out.');
+      }
+      await mutate();
+      router.refresh();
+      push({ title: 'Signed out' });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to sign out.';
+      push({ title: 'Sign out failed', description: message });
+    }
+  }, [mutate, push, router]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/5 bg-[#060608]/75 shadow-[0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl">
@@ -70,7 +89,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="text-sm font-semibold">{userName}</p>
-              <p className="text-xs uppercase tracking-wide text-white/50">{userRole.toLowerCase()}</p>
+              <p className="text-xs uppercase tracking-wide text-white/50">{String(userRole).toLowerCase()}</p>
             </div>
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold uppercase">
               {userName
@@ -79,6 +98,22 @@ export function Header() {
                 .join('')
                 .slice(0, 2) || 'GU'}
             </span>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-wide text-white/70 transition hover:text-white"
+              >
+                Sign out
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-wide text-white/70 transition hover:text-white"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </div>

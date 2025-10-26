@@ -14,10 +14,11 @@ export async function POST(
   { params }: { params: { threadId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const rate = checkRateLimit(`post:${session.user.id}`);
+  const rate = checkRateLimit(`post:${user.id}`);
   if (!rate.allowed) {
     return NextResponse.json({ error: 'Slow down' }, { status: 429 });
   }
@@ -29,7 +30,7 @@ export async function POST(
   const post = await prisma.post.create({
     data: {
       threadId: params.threadId,
-      authorId: session.user.id,
+      authorId: user.id,
       body: sanitize(parsed.data.body),
     },
     include: { author: true },

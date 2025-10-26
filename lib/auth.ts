@@ -1,57 +1,85 @@
 import { cookies } from 'next/headers';
 import { Role } from '@prisma/client';
+import {
+  createSession,
+  deleteSession,
+  getSession,
+  getSessionCookieName,
+  StoredUser,
+} from '@/lib/user-store';
 
-type SessionUser = {
+export type SessionUser = {
   id: string;
   name: string;
   email: string;
   role: Role;
+  isOwner: boolean;
+  onboarded: boolean;
+  region?: string;
+  gym?: string;
 };
 
-type Session = {
-  user: SessionUser;
+export type Session = {
+  user: SessionUser | null;
 };
 
-const demoDefaults: SessionUser = {
-  id: 'user-organizer',
-  name: 'Olivia Organizer',
-  email: 'olivia@example.com',
-  role: Role.GUEST,
+const COOKIE_NAME = getSessionCookieName();
+const COOKIE_OPTIONS = {
+  path: '/',
+  httpOnly: true,
+  sameSite: 'lax' as const,
+  secure: process.env.NODE_ENV === 'production',
+  maxAge: 60 * 60 * 24 * 30,
 };
 
-function parseRole(value: string | undefined): Role {
-  if (!value) return Role.GUEST;
-  const maybeRole = value.toUpperCase() as Role;
-  return Object.values(Role).includes(maybeRole) ? maybeRole : Role.GUEST;
-}
-
-export async function auth(): Promise<Session> {
-  const store = cookies();
-  const role = parseRole(store.get('demo-role')?.value);
-  const name = store.get('demo-name')?.value ?? demoDefaults.name;
-  const email = store.get('demo-email')?.value ?? demoDefaults.email;
-
+function toSessionUser(user: StoredUser): SessionUser {
   return {
-    user: {
-      ...demoDefaults,
-      role,
-      name,
-      email,
-    },
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isOwner: Boolean(user.isOwner),
+    onboarded: Boolean(user.onboarded),
+    region: user.region,
+    gym: user.gym,
   };
 }
 
-export async function signIn() {
+export async function auth(): Promise<Session> {
+  const token = cookies().get(COOKIE_NAME)?.value;
+  if (!token) {
+    return { user: null };
+  }
+  const result = await getSession(token);
+  if (!result) {
+    cookies().delete(COOKIE_NAME);
+    return { user: null };
+  }
+  return { user: toSessionUser(result.user) };
+}
+
+export async function signIn(userId: string) {
+  const token = await createSession(userId);
+  cookies().set(COOKIE_NAME, token, COOKIE_OPTIONS);
   return { ok: true };
 }
 
 export async function signOut() {
+  const store = cookies();
+  const token = store.get(COOKIE_NAME)?.value;
+  if (token) {
+    await deleteSession(token);
+    store.delete(COOKIE_NAME);
+  }
   return { ok: true };
 }
 
 export async function authHandler() {
-  return new Response(JSON.stringify({ message: 'Authentication is mocked in this demo environment.' }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return new Response(
+    JSON.stringify({ message: 'Use the custom signup and login endpoints for authentication.' }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 }

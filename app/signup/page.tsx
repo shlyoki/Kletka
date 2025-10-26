@@ -1,96 +1,102 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-
-const weightClasses = ["Flyweight", "Bantamweight", "Featherweight", "Lightweight", "Welterweight", "Middleweight", "Light Heavyweight", "Heavyweight"];
-const rulesets = ["MMA", "Kickboxing", "Boxing", "Grappling"];
+import Link from 'next/link';
+import { FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/toast-provider';
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { push } = useToast();
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload?.error ?? 'Unable to create account.');
+      }
+      push({ title: 'Account created', description: 'Welcome! Finish onboarding to explore the league.' });
+      router.push('/onboarding');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Something went wrong.';
+      push({ title: 'Signup failed', description: message });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <header className="space-y-2 text-center">
         <h1 className="text-3xl font-semibold text-white">Join MMA Friends League</h1>
         <p className="text-sm text-white/60">
-          Build your fighter profile, share availability, and sign digital waivers faster than you can tape your hands.
+          Create your account to access matchmaking, events, and community updates. All new members start as guests until the
+          owner promotes you.
         </p>
       </header>
-      <form className="card space-y-6 p-6">
-        <div className="grid gap-4 md:grid-cols-2">
+      <form className="card space-y-6 p-6" onSubmit={handleSubmit}>
+        <div className="grid gap-4">
           <label className="space-y-2 text-sm">
             <span className="text-xs uppercase text-white/40">Full name</span>
-            <input className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2" placeholder="Kai Rivera" />
+            <input
+              className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2"
+              placeholder="Kai Rivera"
+              value={form.name}
+              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+              required
+            />
           </label>
           <label className="space-y-2 text-sm">
             <span className="text-xs uppercase text-white/40">Email</span>
-            <input type="email" className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2" placeholder="you@example.com" />
+            <input
+              type="email"
+              className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+              required
+            />
           </label>
           <label className="space-y-2 text-sm">
-            <span className="text-xs uppercase text-white/40">Phone</span>
-            <input className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2" placeholder="(555) 012-3456" />
-          </label>
-          <label className="space-y-2 text-sm">
-            <span className="text-xs uppercase text-white/40">Role</span>
-            <select className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2">
-              <option>Fighter</option>
-              <option>Organizer</option>
-              <option>Judge</option>
-              <option>Spectator</option>
-            </select>
+            <span className="text-xs uppercase text-white/40">Password</span>
+            <input
+              type="password"
+              className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2"
+              placeholder="At least 8 characters"
+              value={form.password}
+              onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+              minLength={8}
+              required
+            />
           </label>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="space-y-2 text-sm">
-            <span className="text-xs uppercase text-white/40">Weight class</span>
-            <select className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2">
-              {weightClasses.map((weight) => (
-                <option key={weight}>{weight}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2 text-sm">
-            <span className="text-xs uppercase text-white/40">Preferred ruleset</span>
-            <select className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2">
-              {rulesets.map((ruleset) => (
-                <option key={ruleset}>{ruleset}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <label className="space-y-2 text-sm">
-          <span className="text-xs uppercase text-white/40">Medical notes (private)</span>
-          <textarea className="min-h-[120px] w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2" placeholder="Disclose recent injuries, surgeries, or concerns for organizer review." />
-        </label>
-        <label className="space-y-2 text-sm">
-          <span className="text-xs uppercase text-white/40">Emergency contact (private)</span>
-          <input className="w-full rounded-xl border border-white/10 bg-surface-muted/60 px-3 py-2" placeholder="Ava Rivera • (555) 201-0100" />
-        </label>
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-white/50">
-          <p>
-            By joining you agree to the <Link href="#" className="text-primary">community code</Link> and safety guidelines.
-          </p>
-          <button className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow">
-            Continue
-          </button>
-        </div>
+        <p className="text-xs text-white/50">
+          By creating an account you agree to the community code and safety guidelines. Organizer access remains locked to the
+          owner.
+        </p>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow disabled:opacity-60"
+        >
+          {isSubmitting ? 'Creating account…' : 'Create account'}
+        </button>
       </form>
-      <div className="text-center text-xs text-white/50">
-        Prefer single sign-on?
-        <div className="mt-3 flex justify-center gap-3 text-sm">
-          <button
-            type="button"
-            onClick={() => alert("Google sign-in is queued. Add your client ID in the auth settings to enable it.")}
-            className="rounded-full border border-white/20 px-4 py-2 text-white/70 transition hover:text-white"
-          >
-            Continue with Google
-          </button>
-          <button
-            type="button"
-            onClick={() => alert("Apple sign-in will activate once certificates are uploaded in settings.")}
-            className="rounded-full border border-white/20 px-4 py-2 text-white/70 transition hover:text-white"
-          >
-            Continue with Apple
-          </button>
-        </div>
+      <div className="text-center text-xs text-white/60">
+        Already have an account?{' '}
+        <Link href="/login" className="text-primary">
+          Sign in here
+        </Link>
       </div>
     </div>
   );

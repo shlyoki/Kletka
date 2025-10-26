@@ -33,14 +33,15 @@ export async function PATCH(
   { params }: { params: { threadId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const thread = await prisma.thread.findUnique({ where: { id: params.threadId } });
-  if (!thread || thread.authorId !== session.user.id) {
+  if (!thread || thread.authorId !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
-  const rate = checkRateLimit(`thread-edit:${session.user.id}`);
+  const rate = checkRateLimit(`thread-edit:${user.id}`);
   if (!rate.allowed) {
     return NextResponse.json({ error: 'Slow down' }, { status: 429 });
   }
@@ -64,11 +65,12 @@ export async function DELETE(
   { params }: { params: { threadId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const thread = await prisma.thread.findUnique({ where: { id: params.threadId } });
-  if (!thread || thread.authorId !== session.user.id) {
+  if (!thread || thread.authorId !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   await prisma.thread.delete({ where: { id: params.threadId } });

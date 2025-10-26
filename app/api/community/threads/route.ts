@@ -38,10 +38,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const rate = checkRateLimit(`thread:${session.user.id}`);
+  const rate = checkRateLimit(`thread:${user.id}`);
   if (!rate.allowed) {
     return NextResponse.json({ error: 'Slow down' }, { status: 429 });
   }
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
       title: sanitize(parsed.data.title),
       body: sanitize(parsed.data.body),
       roleScope: parsed.data.roleScope,
-      authorId: session.user.id,
+      authorId: user.id,
       eventId: parsed.data.eventId,
     },
   });

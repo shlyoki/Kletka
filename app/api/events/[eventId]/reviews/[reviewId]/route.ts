@@ -13,14 +13,15 @@ export async function PATCH(
   { params }: { params: { eventId: string; reviewId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (session.user.role !== Role.ORGANIZER) {
+  if (user.role !== Role.ORGANIZER) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const event = await prisma.event.findUnique({ where: { id: params.eventId } });
-  if (!event || event.organizerId !== session.user.id) {
+  if (!event || event.organizerId !== user.id) {
     return NextResponse.json({ error: 'Not allowed to moderate reviews for this event' }, { status: 403 });
   }
   const body = await req.json();

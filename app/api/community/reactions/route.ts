@@ -12,7 +12,8 @@ const toggleSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json();
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
   }
   const existing = await prisma.reaction.findFirst({
     where: {
-      userId: session.user.id,
+      userId: user.id,
       entityType: parsed.data.entityType,
       entityId: parsed.data.entityId,
     },
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
   }
   await prisma.reaction.create({
     data: {
-      userId: session.user.id,
+      userId: user.id,
       entityType: parsed.data.entityType,
       entityId: parsed.data.entityId,
       kind: parsed.data.kind,

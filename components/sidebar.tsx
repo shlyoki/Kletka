@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import {
   CalendarDaysIcon,
@@ -17,6 +17,8 @@ import {
 } from '@heroicons/react/24/outline';
 import type { ComponentProps } from 'react';
 import useSWR from 'swr';
+import { useCallback } from 'react';
+import { useToast } from './toast-provider';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -39,8 +41,29 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname();
-  const { data } = useSWR('/api/session', fetcher);
+  const router = useRouter();
+  const { push } = useToast();
+  const { data, mutate } = useSWR('/api/session', fetcher);
   const activeUser = data?.user;
+  const isAuthenticated = Boolean(activeUser);
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Failed to sign out.');
+      }
+      await mutate();
+      router.refresh();
+      push({ title: 'Signed out' });
+      onNavigate?.();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to sign out.';
+      push({ title: 'Sign out failed', description: message });
+    }
+  }, [mutate, onNavigate, push, router]);
+
+  const profileHref = activeUser ? `/profile/${activeUser.id}` : '/login';
 
   return (
     <nav className="flex h-full flex-col justify-between p-6">
@@ -89,11 +112,11 @@ export function Sidebar({ onNavigate }: SidebarProps) {
               <p className="text-xs uppercase tracking-wide text-white/40">{(activeUser?.role ?? 'GUEST').toLowerCase()}</p>
             </div>
             <Link
-              href="/profile/u1"
+              href={profileHref}
               className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary"
               onClick={onNavigate}
             >
-              View
+              {isAuthenticated ? 'Profile' : 'Sign in'}
             </Link>
           </div>
         </div>
@@ -114,6 +137,25 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             <InboxStackIcon className="h-4 w-4" />
             Incident Reports
           </Link>
+        </div>
+        <div>
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:text-white"
+            >
+              Sign out
+            </button>
+          ) : (
+            <Link
+              href="/signup"
+              onClick={onNavigate}
+              className="block w-full rounded-full border border-white/20 px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:text-white"
+            >
+              Create account
+            </Link>
+          )}
         </div>
       </div>
     </nav>

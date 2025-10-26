@@ -11,10 +11,11 @@ const querySchema = z.object({
 
 export async function GET(req: Request) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (session.user.role !== Role.ORGANIZER) {
+  if (user.role !== Role.ORGANIZER) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { searchParams } = new URL(req.url);
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
 
   const events = await prisma.event.findMany({
     where: {
-      organizerId: session.user.id,
+      organizerId: user.id,
       ...(fromDate || toDate
         ? {
             date: {

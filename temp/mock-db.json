@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "id": "user-organizer",
+      "name": "Olivia Organizer",
+      "email": "olivia@example.com",
+      "passwordHash": "78589c94e7eae09c6e6230e5fb8a03c9:03a7fc583576f6327a9820428c32e6abac689965f8e6cf330c81affdc07d5c0d",
+      "role": "ORGANIZER",
+      "createdAt": "2024-01-01T12:00:00.000Z",
+      "isOwner": true,
+      "onboarded": true,
+      "region": "Pacific Northwest",
+      "gym": "Warehouse Warriors"
+    }
+  ],
+  "sessions": []
+}

@@ -1,8 +1,7 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 import { Role } from '@prisma/client';
 import { auth } from '@/lib/auth';
+import { setUserRole, updateUserProfile } from '@/lib/user-store';
 
 const roleDestinations: Record<Role, string> = {
   [Role.ORGANIZER]: '/dashboard',
@@ -26,29 +25,38 @@ function roleOptions() {
 
 export default async function OnboardingPage() {
   const session = await auth();
+  if (!session.user) {
+    redirect('/signup');
+  }
 
   async function completeOnboarding(formData: FormData) {
     'use server';
-    const role = (formData.get('role') as Role) ?? Role.GUEST;
+    const current = await auth();
+    if (!current.user) {
+      redirect('/signup');
+    }
     const name = formData.get('name');
     const region = formData.get('region');
     const gym = formData.get('gym');
+    const requestedRole = (formData.get('role') as Role) ?? current.user.role;
+    const finalRole = current.user.isOwner ? requestedRole : current.user.role;
 
-    const store = cookies();
-    store.set('demo-role', role, { path: '/', httpOnly: false });
-    if (typeof name === 'string' && name.trim()) {
-      store.set('demo-name', name.trim(), { path: '/', httpOnly: false });
-    }
-    if (typeof region === 'string' && region.trim()) {
-      store.set('demo-region', region.trim(), { path: '/', httpOnly: false });
-    }
-    if (typeof gym === 'string' && gym.trim()) {
-      store.set('demo-gym', gym.trim(), { path: '/', httpOnly: false });
+    await updateUserProfile(current.user.id, {
+      name: typeof name === 'string' ? name : undefined,
+      region: typeof region === 'string' ? region : undefined,
+      gym: typeof gym === 'string' ? gym : undefined,
+      onboarded: true,
+    });
+
+    if (current.user.isOwner && requestedRole !== current.user.role) {
+      await setUserRole(current.user.id, finalRole);
     }
 
-    await revalidatePath('/');
-    redirect(roleDestinations[role] ?? '/');
+    redirect(roleDestinations[finalRole] ?? '/');
   }
+
+  const user = session.user;
+  const disableRoleSelection = !user.isOwner;
 
   return (
     <div className="space-y-10">
@@ -65,17 +73,18 @@ export default async function OnboardingPage() {
           Your name
           <input
             name="name"
-            defaultValue={session.user.name}
+            defaultValue={user.name}
             className="w-full rounded-2xl border border-white/10 bg-surface-muted/70 px-3 py-2 text-sm text-white"
-            placeholder="Nova Cruz"
+            placeholder="Olivia Organizer"
           />
         </label>
         <label className="space-y-2 text-xs uppercase tracking-wide text-white/50">
           Role
           <select
             name="role"
-            defaultValue={session.user.role}
+            defaultValue={user.role}
             className="w-full rounded-2xl border border-white/10 bg-surface-muted/70 px-3 py-2 text-sm text-white"
+            disabled={disableRoleSelection}
           >
             {roleOptions().map((option) => (
               <option key={option.value} value={option.value}>
@@ -83,11 +92,17 @@ export default async function OnboardingPage() {
               </option>
             ))}
           </select>
+          {disableRoleSelection && (
+            <p className="text-[11px] uppercase tracking-wide text-white/40">
+              Only the owner can assign roles. You will remain a guest until promoted.
+            </p>
+          )}
         </label>
         <label className="space-y-2 text-xs uppercase tracking-wide text-white/50">
           Region
           <input
             name="region"
+            defaultValue={user.region ?? ''}
             className="w-full rounded-2xl border border-white/10 bg-surface-muted/70 px-3 py-2 text-sm text-white"
             placeholder="Pacific Northwest"
           />
@@ -96,6 +111,7 @@ export default async function OnboardingPage() {
           Gym / organization
           <input
             name="gym"
+            defaultValue={user.gym ?? ''}
             className="w-full rounded-2xl border border-white/10 bg-surface-muted/70 px-3 py-2 text-sm text-white"
             placeholder="Warehouse Warriors"
           />

@@ -51,10 +51,11 @@ export async function POST(
   { params }: { params: { eventId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (![Role.ORGANIZER, Role.FIGHTER, Role.JUDGE].includes(session.user.role)) {
+  if (![Role.ORGANIZER, Role.FIGHTER, Role.JUDGE].includes(user.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const pairCtor = (globalThis as any).WebSocketPair as WebSocketPairCtor | undefined;
@@ -95,8 +96,8 @@ export async function POST(
     const message = await prisma.eventChatMessage.create({
       data: {
         eventId: params.eventId,
-        senderId: session.user.id,
-        role: session.user.role,
+        senderId: user.id,
+        role: user.role,
         body,
       },
       include: { sender: true },

@@ -1,13 +1,16 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { Role } from '@prisma/client';
-
-const COOKIE_OPTIONS = { path: '/', httpOnly: false } as const;
+import { auth } from '@/lib/auth';
+import { setUserRole, updateUserProfile } from '@/lib/user-store';
 
 export async function updateSessionRole(role: Role) {
-  cookies().set('demo-role', role, { ...COOKIE_OPTIONS });
+  const session = await auth();
+  if (!session.user?.isOwner) {
+    throw new Error('Only the owner can change roles.');
+  }
+  await setUserRole(session.user.id, role);
   await revalidatePath('/');
 }
 
@@ -18,12 +21,13 @@ export async function updateSessionIdentity({
   name?: string;
   email?: string;
 }) {
-  const store = cookies();
-  if (typeof name === 'string' && name.trim()) {
-    store.set('demo-name', name.trim(), { ...COOKIE_OPTIONS });
+  const session = await auth();
+  if (!session.user) {
+    throw new Error('You must be signed in to update your profile.');
   }
-  if (typeof email === 'string' && email.trim()) {
-    store.set('demo-email', email.trim(), { ...COOKIE_OPTIONS });
-  }
+  await updateUserProfile(session.user.id, {
+    name,
+    email,
+  });
   await revalidatePath('/');
 }

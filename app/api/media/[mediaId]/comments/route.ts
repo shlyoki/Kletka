@@ -26,10 +26,11 @@ export async function POST(
   { params }: { params: { mediaId: string } }
 ) {
   const session = await auth();
-  if (!session?.user) {
+  const user = session.user;
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const rate = checkRateLimit(`media-comment:${session.user.id}`);
+  const rate = checkRateLimit(`media-comment:${user.id}`);
   if (!rate.allowed) {
     return NextResponse.json({ error: 'Slow down' }, { status: 429 });
   }
@@ -41,7 +42,7 @@ export async function POST(
   const comment = await prisma.mediaComment.create({
     data: {
       mediaId: params.mediaId,
-      userId: session.user.id,
+      userId: user.id,
       body: sanitize(parsed.data.body),
     },
     include: { user: true },
