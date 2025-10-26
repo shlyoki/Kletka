@@ -209,19 +209,20 @@ export default function LeaderboardPage() {
                 <th className="px-4 py-3">Weight</th>
                 <th className="px-4 py-3 text-right">Record</th>
                 <th className="px-4 py-3 text-right">ELO</th>
+                <th className="px-4 py-3 text-right">Profile</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 bg-surface-muted/60">
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-white/50">
+                  <td colSpan={8} className="px-4 py-6 text-center text-white/50">
                     Loading standings…
                   </td>
                 </tr>
               )}
               {!isLoading && tableRows.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-white/50">
+                  <td colSpan={8} className="px-4 py-6 text-center text-white/50">
                     No fighters match this filter set yet. Adjust filters or invite more friends to compete.
                   </td>
                 </tr>
@@ -247,6 +248,14 @@ export default function LeaderboardPage() {
                     <span className="font-semibold text-white">{row.wins}-{row.losses}-{row.draws}</span>
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-primary">{row.elo}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/fighters/${row.id}`}
+                      className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:border-primary/40 hover:text-primary"
+                    >
+                      View profile
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

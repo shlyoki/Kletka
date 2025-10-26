@@ -46,6 +46,12 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unable to create account.';
-    return NextResponse.json({ error: message }, { status: 400 });
+    const normalized = message.toLowerCase();
+    const sanitizedMessage =
+      normalized.includes('erofs') || normalized.includes('read-only') || normalized.includes('eacces')
+        ? 'Signups are temporarily unavailable in this deployment environment.'
+        : message;
+    const status = sanitizedMessage === message ? 400 : 503;
+    return NextResponse.json({ error: sanitizedMessage }, { status });
   }
 }

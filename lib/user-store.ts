@@ -5,6 +5,8 @@ import { Role } from '@prisma/client';
 
 const DEFAULT_DB_PATH = path.join(process.cwd(), 'temp', 'mock-db.json');
 const DB_PATH = process.env.MFL_DB_PATH ? path.resolve(process.env.MFL_DB_PATH) : DEFAULT_DB_PATH;
+const FORCE_MEMORY = process.env.MFL_DB_MODE === 'memory' || process.env.VERCEL === '1';
+const READ_ONLY_CODES = new Set(['EROFS', 'EACCES']);
 const ITERATIONS = 120_000;
 const KEY_LENGTH = 32;
 const DIGEST = 'sha256';
@@ -35,7 +37,7 @@ interface MockDatabase {
 }
 
 let inMemoryDb: MockDatabase | null = null;
-let preferMemory = false;
+let preferMemory = FORCE_MEMORY;
 
 function createSeed(): MockDatabase {
   return {
@@ -92,7 +94,7 @@ async function ensureDatabase() {
       await fs.writeFile(DB_PATH, JSON.stringify(seed, null, 2), 'utf8');
     } catch (error) {
       const code = (error as NodeJS.ErrnoException)?.code;
-      if (code === 'EROFS' || code === 'EACCES') {
+      if (code && READ_ONLY_CODES.has(code)) {
         preferMemory = true;
         if (!inMemoryDb) {
           inMemoryDb = createSeed();
@@ -119,7 +121,7 @@ async function readDatabase(): Promise<MockDatabase> {
     return normalizeDatabase(parsed);
   } catch (error) {
     const code = (error as NodeJS.ErrnoException)?.code;
-    if (code === 'ENOENT' || code === 'EROFS' || code === 'EACCES') {
+    if (code === 'ENOENT' || (code && READ_ONLY_CODES.has(code))) {
       preferMemory = true;
       inMemoryDb = inMemoryDb ?? createSeed();
       const snapshot = JSON.parse(JSON.stringify(inMemoryDb)) as MockDatabase;
@@ -140,7 +142,7 @@ async function writeDatabase(data: MockDatabase) {
     await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
   } catch (error) {
     const code = (error as NodeJS.ErrnoException)?.code;
-    if (code === 'EROFS' || code === 'EACCES') {
+    if (code && READ_ONLY_CODES.has(code)) {
       preferMemory = true;
       inMemoryDb = JSON.parse(JSON.stringify(data)) as MockDatabase;
       return;

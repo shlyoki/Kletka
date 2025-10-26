@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import {
   Area,
@@ -14,6 +14,7 @@ import {
   YAxis,
 } from 'recharts';
 import { ArrowDownTrayIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -31,19 +32,30 @@ interface AnalyticsEvent {
 }
 
 export default function OrganizerAnalyticsPage() {
+  const router = useRouter();
   const [range, setRange] = useState<{ from: string; to: string }>({ from: '', to: '' });
 
   const params = new URLSearchParams();
   if (range.from) params.set('from', range.from);
   if (range.to) params.set('to', range.to);
 
-  const { data, isLoading, error } = useSWR<{ events: AnalyticsEvent[]; totals: any; error?: string }>(
-    `/api/analytics/organizer?${params.toString()}`,
-    fetcher,
-  );
+  const { data: session } = useSWR<{ user?: { isOwner?: boolean } }>('/api/session', fetcher);
+  const isOwner = Boolean(session?.user?.isOwner);
+  const analyticsKey = isOwner ? `/api/analytics/organizer?${params.toString()}` : null;
+
+  const { data, isLoading, error } = useSWR<{ events: AnalyticsEvent[]; totals: any; error?: string }>(analyticsKey, fetcher);
+  const unauthorizedFromApi = data && 'error' in data && typeof data.error === 'string' ? data.error : null;
+  const unauthorized = (!isOwner && Boolean(session)) || Boolean(unauthorizedFromApi || error);
   const unauthorizedMessage =
-    (data && 'error' in data && typeof data.error === 'string' ? data.error : null) || (error ? 'Forbidden' : null);
-  const unauthorized = Boolean(unauthorizedMessage);
+    !isOwner && session
+      ? 'Organizer role required to view analytics. Switch roles in the header to explore friendly ROI metrics.'
+      : unauthorizedFromApi || (error ? 'Forbidden' : null);
+
+  useEffect(() => {
+    if (session && !isOwner) {
+      router.replace('/');
+    }
+  }, [isOwner, router, session]);
 
   const exportJson = () => {
     if (!data) return;
