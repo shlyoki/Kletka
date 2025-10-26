@@ -10,10 +10,19 @@ import { MobileNav } from "./mobile-nav";
 const breadcrumbs: Record<string, string> = {
   "/": "Home",
   "/events": "Events",
+<<<<<<< HEAD
   "/fighters": "Fighters",
   "/leaderboards": "Leaderboard",
   "/messages": "Messages",
   "/media": "Media"
+=======
+  "/create-event": "Create Event",
+  "/matchmaking": "Matchmaking",
+  "/leaderboards": "Leaderboards",
+  "/messages": "Messages",
+  "/dashboard": "Organizer Dashboard",
+  "/settings": "Settings"
+>>>>>>> origin/main
 };
 
 export function Header() {
@@ -21,8 +30,13 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
+<<<<<<< HEAD
     <header className="sticky top-0 z-40 border-b border-white/5 bg-[#060608]/75 shadow-[0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl">
       <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-12 xl:px-16">
+=======
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/5 bg-[#0B0B0F]/80 backdrop-blur-xl">
+      <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+>>>>>>> origin/main
         <div className="flex items-center gap-3">
           <button
             className="lg:hidden rounded-xl border border-white/10 p-2"
@@ -31,9 +45,15 @@ export function Header() {
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
+<<<<<<< HEAD
           <div className="space-y-1">
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/40">MMA Friends League</p>
             <h1 className="text-base font-semibold tracking-wide text-white">
+=======
+          <div>
+            <p className="text-xs uppercase text-white/40">MMA Friends League</p>
+            <h1 className="text-lg font-semibold tracking-wide">
+>>>>>>> origin/main
               {breadcrumbs[pathname] ?? "Explore"}
             </h1>
           </div>

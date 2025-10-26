@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
+<<<<<<< HEAD
 import { AuroraBackground } from "@/components/aurora-background";
+=======
+>>>>>>> origin/main
 
 export const metadata: Metadata = {
   title: "MMA Friends League",
@@ -17,6 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+<<<<<<< HEAD
       <body className="bg-[#060608] text-white">
         <div className="relative min-h-screen lg:grid lg:grid-cols-[18rem_1fr] lg:items-start">
           <AuroraBackground />
@@ -29,6 +33,17 @@ export default function RootLayout({
               <div className="mx-auto w-full max-w-7xl space-y-12">
                 {children}
               </div>
+=======
+      <body className="bg-[#0B0B0F] text-white">
+        <div className="min-h-screen lg:grid lg:grid-cols-[18rem_1fr]">
+          <aside className="hidden lg:block border-r border-white/5 bg-surface-muted/60 backdrop-blur-xl">
+            <Sidebar />
+          </aside>
+          <main className="relative min-h-screen">
+            <Header />
+            <div className="px-4 pb-20 pt-24 sm:px-6 lg:px-10">
+              {children}
+>>>>>>> origin/main
             </div>
           </main>
         </div>

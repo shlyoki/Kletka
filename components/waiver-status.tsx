@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import Link from "next/link";
+=======
+>>>>>>> origin/main
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface WaiverStatusProps {
@@ -23,12 +26,18 @@ export function WaiverStatus({ signed, signedAt }: WaiverStatusProps) {
         </p>
       </div>
       {!signed && (
+<<<<<<< HEAD
         <Link
           href="/safety#waiver"
           className="ml-auto inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow"
         >
           Sign now
         </Link>
+=======
+        <button className="ml-auto rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow">
+          Sign now
+        </button>
+>>>>>>> origin/main
       )}
     </div>
   );

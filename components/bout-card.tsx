@@ -10,6 +10,7 @@ interface BoutCardProps {
 export function BoutCard({ bout }: BoutCardProps) {
   const red = users.find((u) => u.id === bout.redFighterId);
   const blue = users.find((u) => u.id === bout.blueFighterId);
+<<<<<<< HEAD
   const animationDelay = (bout.order % 5) * 0.3;
 
   return (
@@ -17,6 +18,11 @@ export function BoutCard({ bout }: BoutCardProps) {
       className="card p-5 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_45px_rgba(0,0,0,0.45)] animate-float-slow"
       style={{ animationDelay: `${animationDelay}s` }}
     >
+=======
+
+  return (
+    <article className="card p-5">
+>>>>>>> origin/main
       <header className="flex items-center justify-between text-xs text-white/50">
         <span className="badge">{bout.ruleset}</span>
         <span>Order #{bout.order}</span>

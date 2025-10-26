@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 "use client";
 
+=======
+>>>>>>> origin/main
 import Link from "next/link";
 
 const weightClasses = ["Flyweight", "Bantamweight", "Featherweight", "Lightweight", "Welterweight", "Middleweight", "Light Heavyweight", "Heavyweight"];
@@ -76,6 +79,7 @@ export default function SignupPage() {
       <div className="text-center text-xs text-white/50">
         Prefer single sign-on?
         <div className="mt-3 flex justify-center gap-3 text-sm">
+<<<<<<< HEAD
           <button
             type="button"
             onClick={() => alert("Google sign-in is queued. Add your client ID in the auth settings to enable it.")}
@@ -90,6 +94,10 @@ export default function SignupPage() {
           >
             Continue with Apple
           </button>
+=======
+          <button className="rounded-full border border-white/20 px-4 py-2 text-white/70">Continue with Google</button>
+          <button className="rounded-full border border-white/20 px-4 py-2 text-white/70">Continue with Apple</button>
+>>>>>>> origin/main
         </div>
       </div>
     </div>

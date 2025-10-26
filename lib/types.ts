@@ -17,10 +17,13 @@ export interface User {
     losses: number;
     draws: number;
   };
+<<<<<<< HEAD
   statusTag?: string;
   winRate?: number;
   finishes?: number;
   knockouts?: number;
+=======
+>>>>>>> origin/main
   preferredRuleset?: Ruleset;
   medicalNotes?: string;
   emergencyContact?: string;
@@ -79,7 +82,10 @@ export interface Notification {
   message: string;
   type: "match" | "checkin" | "result" | "waiver";
   date: string;
+<<<<<<< HEAD
   link: string;
+=======
+>>>>>>> origin/main
 }
 
 export interface MediaAsset {

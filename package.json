@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@headlessui/react": "^1.7.17",
+>>>>>>> origin/main
     "@heroicons/react": "^2.1.5",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.3",

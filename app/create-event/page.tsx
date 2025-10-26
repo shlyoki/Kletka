@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
+<<<<<<< HEAD
 import Link from "next/link";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 import { Toggle } from "@/components/toggle";
+=======
+import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { Switch } from "@headlessui/react";
+import { clsx } from "clsx";
+>>>>>>> origin/main
 
 const rulesets = [
   { name: "MMA", defaults: "3 × 3 min • No elbows • No knees to head • Standing 8 count" },
@@ -18,6 +24,7 @@ export default function CreateEventPage() {
   const [step, setStep] = useState(1);
   const [paid, setPaid] = useState(true);
   const [waiverRequired, setWaiverRequired] = useState(true);
+<<<<<<< HEAD
   const [feedback, setFeedback] = useState<null | { status: "draft" | "published"; message: string }>(null);
 
   const handleSaveDraft = () => {
@@ -33,6 +40,8 @@ export default function CreateEventPage() {
       message: "Event published! Share the invite link or QR code with your fighters and spectators."
     });
   };
+=======
+>>>>>>> origin/main
 
   return (
     <div className="space-y-10">
@@ -59,6 +68,7 @@ export default function CreateEventPage() {
           </button>
         ))}
       </nav>
+<<<<<<< HEAD
       {feedback && (
         <div
           className={clsx(
@@ -74,6 +84,11 @@ export default function CreateEventPage() {
       {step === 1 && <StepDetails paid={paid} setPaid={setPaid} waiverRequired={waiverRequired} setWaiverRequired={setWaiverRequired} />}
       {step === 2 && <StepRules />}
       {step === 3 && <StepPublish onPublish={handlePublish} onSaveDraft={handleSaveDraft} />}
+=======
+      {step === 1 && <StepDetails paid={paid} setPaid={setPaid} waiverRequired={waiverRequired} setWaiverRequired={setWaiverRequired} />}
+      {step === 2 && <StepRules />}
+      {step === 3 && <StepPublish />}
+>>>>>>> origin/main
     </div>
   );
 }
@@ -149,12 +164,16 @@ function StepRules() {
           <article key={ruleset.name} className="rounded-2xl border border-white/10 bg-surface-muted/60 p-4">
             <h3 className="text-base font-semibold text-white">{ruleset.name}</h3>
             <p className="text-xs text-white/50">{ruleset.defaults}</p>
+<<<<<<< HEAD
             <Link
               href={`/settings?section=rulesets&focus=${ruleset.name.toLowerCase()}`}
               className="mt-4 inline-flex text-xs font-semibold uppercase tracking-wide text-primary"
             >
               Customize
             </Link>
+=======
+            <button className="mt-4 text-xs uppercase tracking-wide text-primary">Customize</button>
+>>>>>>> origin/main
           </article>
         ))}
       </div>
@@ -170,6 +189,7 @@ function StepRules() {
   );
 }
 
+<<<<<<< HEAD
 function StepPublish({
   onSaveDraft,
   onPublish
@@ -177,6 +197,9 @@ function StepPublish({
   onSaveDraft: () => void;
   onPublish: () => void;
 }) {
+=======
+function StepPublish() {
+>>>>>>> origin/main
   return (
     <section className="card space-y-6 p-6 text-sm text-white/70">
       <header className="space-y-2">
@@ -202,6 +225,7 @@ function StepPublish({
         </article>
       </div>
       <div className="flex flex-wrap gap-3">
+<<<<<<< HEAD
         <button
           type="button"
           onClick={onSaveDraft}
@@ -214,6 +238,12 @@ function StepPublish({
           onClick={onPublish}
           className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow"
         >
+=======
+        <button className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/70">
+          Save draft
+        </button>
+        <button className="rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-glow">
+>>>>>>> origin/main
           Publish event
         </button>
       </div>
@@ -228,7 +258,17 @@ function SwitchField({ label, enabled, onChange }: { label: string; enabled: boo
         <p className="text-xs uppercase text-white/40">{label}</p>
         <p className="text-[11px] text-white/40">{enabled ? "Active" : "Disabled"}</p>
       </div>
+<<<<<<< HEAD
       <Toggle checked={enabled} onChange={onChange} />
+=======
+      <Switch
+        checked={enabled}
+        onChange={onChange}
+        className={clsx(enabled ? "bg-primary" : "bg-white/10", "relative inline-flex h-6 w-11 items-center rounded-full transition")}
+      >
+        <span className={clsx(enabled ? "translate-x-6" : "translate-x-1", "inline-block h-4 w-4 transform rounded-full bg-white transition")} />
+      </Switch>
+>>>>>>> origin/main
     </div>
   );
 }

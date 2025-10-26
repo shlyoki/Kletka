@@ -1,17 +1,26 @@
 # MMA Friends League (Prototype)
 
+<<<<<<< HEAD
 [![Open in Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-org/mma-friends-league&project-name=mma-friends-league&repository-name=mma-friends-league)
 
 A mobile-first Next.js PWA for planning friendly combat-sport events among friends. The UI covers fighter profiles, matchmaking, event management, scoring, waivers, chat, and media surfaces.
 
 > **Branch note:** The latest UI work now lives on the `main` branch (previously `work`). Check out `main` to run or deploy the newest experience.
 
+=======
+A mobile-first Next.js PWA for planning friendly combat-sport events among friends. The UI covers fighter profiles, matchmaking, event management, scoring, waivers, chat, and media surfaces.
+
+>>>>>>> origin/main
 ## Tech stack
 
 - Next.js 14 with App Router
 - React 18 & TypeScript
 - Tailwind CSS
+<<<<<<< HEAD
 - Custom UI primitives and Heroicons
+=======
+- Headless UI and Heroicons
+>>>>>>> origin/main
 
 ## Development
 

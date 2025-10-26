@@ -1,6 +1,10 @@
 "use client";
 
+<<<<<<< HEAD
 import { useEffect } from "react";
+=======
+import { Dialog } from "@headlessui/react";
+>>>>>>> origin/main
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import type { PropsWithChildren } from "react";
 
@@ -10,6 +14,7 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ open, onClose, children }: PropsWithChildren<MobileNavProps>) {
+<<<<<<< HEAD
   useEffect(() => {
     if (!open) {
       return;
@@ -41,12 +46,27 @@ export function MobileNav({ open, onClose, children }: PropsWithChildren<MobileN
       <div className="fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto bg-surface-muted p-4 shadow-xl">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold uppercase tracking-wide text-white/60">Navigation</p>
+=======
+  return (
+    <Dialog as="div" className="lg:hidden" open={open} onClose={onClose}>
+      <div className="fixed inset-0 z-50 bg-black/60" aria-hidden="true" />
+      <Dialog.Panel className="fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto bg-surface-muted p-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <Dialog.Title className="text-sm font-semibold uppercase tracking-wide text-white/60">
+            Navigation
+          </Dialog.Title>
+>>>>>>> origin/main
           <button onClick={onClose} className="rounded-lg border border-white/10 p-2" aria-label="Close navigation">
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
         <div className="mt-6 space-y-6">{children}</div>
+<<<<<<< HEAD
       </div>
     </div>
+=======
+      </Dialog.Panel>
+    </Dialog>
+>>>>>>> origin/main
   );
 }

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import Link from "next/link";
+=======
+>>>>>>> origin/main
 import { ShieldCheckIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import type { User } from "@/lib/types";
 
@@ -7,6 +10,7 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ user }: ProfileCardProps) {
+<<<<<<< HEAD
   const numericId = Number.parseInt(user.id.replace(/[^0-9]/g, "")) || 0;
   const animationDelay = (numericId % 5) * 0.45;
 
@@ -62,6 +66,44 @@ export function ProfileCard({ user }: ProfileCardProps) {
         )}
       </div>
       <footer className="mt-6 flex flex-wrap items-center gap-3 text-xs text-white/50">
+=======
+  return (
+    <article className="card space-y-4 p-6">
+      <header className="flex items-center gap-4">
+        <div className="h-12 w-12 rounded-full bg-primary/30" />
+        <div>
+          <h3 className="text-lg font-semibold text-white">{user.name}</h3>
+          <p className="text-xs uppercase tracking-wide text-white/40">{user.role}</p>
+        </div>
+        {user.verified && <ShieldCheckIcon className="ml-auto h-5 w-5 text-emerald-400" />}
+      </header>
+      {user.nickname && (
+        <p className="text-sm text-white/60">
+          Nickname: <span className="text-white">{user.nickname}</span>
+        </p>
+      )}
+      {user.weightClass && (
+        <p className="text-sm text-white/60">
+          Weight class: <span className="text-white">{user.weightClass}</span>
+        </p>
+      )}
+      {user.record && (
+        <p className="text-sm text-white/60">
+          Record: <span className="text-white">{user.record.wins}-{user.record.losses}-{user.record.draws}</span>
+        </p>
+      )}
+      {user.preferredRuleset && (
+        <p className="text-sm text-white/60">
+          Preferred ruleset: <span className="text-white">{user.preferredRuleset}</span>
+        </p>
+      )}
+      {user.gym && (
+        <p className="text-sm text-white/60">
+          Training out of <span className="text-white">{user.gym}</span>
+        </p>
+      )}
+      <footer className="flex flex-wrap items-center gap-2 text-xs text-white/50">
+>>>>>>> origin/main
         {user.emergencyContact && (
           <span className="badge bg-white/10 text-white/70">Emergency contact secured</span>
         )}

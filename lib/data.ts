@@ -11,11 +11,16 @@ export const users: User[] = [
   {
     id: "u2",
     role: "fighter",
+<<<<<<< HEAD
     name: "Kai Rivera",
+=======
+    name: "Kai " + "" + "Rivera",
+>>>>>>> origin/main
     nickname: "The Tempest",
     email: "kai@example.com",
     weightClass: "Lightweight",
     stance: "Orthodox",
+<<<<<<< HEAD
     experienceLevel: "Advanced",
     gym: "Forge Athletics",
     record: { wins: 15, losses: 5, draws: 0 },
@@ -23,6 +28,11 @@ export const users: User[] = [
     finishes: 12,
     knockouts: 7,
     statusTag: "Active",
+=======
+    experienceLevel: "Intermediate",
+    gym: "Forge Athletics",
+    record: { wins: 5, losses: 1, draws: 0 },
+>>>>>>> origin/main
     preferredRuleset: "MMA",
     medicalNotes: "Healed wrist sprain (cleared)",
     emergencyContact: "Ava Rivera (555-2010)",
@@ -34,6 +44,7 @@ export const users: User[] = [
     name: "Lena Hart",
     nickname: "Nightfall",
     email: "lena@example.com",
+<<<<<<< HEAD
     weightClass: "Welterweight",
     stance: "Southpaw",
     experienceLevel: "Advanced",
@@ -99,12 +110,27 @@ export const users: User[] = [
   },
   {
     id: "u7",
+=======
+    weightClass: "Featherweight",
+    stance: "Southpaw",
+    experienceLevel: "Advanced",
+    gym: "Night Shift MMA",
+    record: { wins: 8, losses: 2, draws: 1 },
+    preferredRuleset: "Kickboxing"
+  },
+  {
+    id: "u4",
+>>>>>>> origin/main
     role: "judge",
     name: "Marcus Le",
     email: "marcus@example.com"
   },
   {
+<<<<<<< HEAD
     id: "u8",
+=======
+    id: "u5",
+>>>>>>> origin/main
     role: "spectator",
     name: "Aria Bloom",
     email: "aria@example.com"
@@ -114,6 +140,7 @@ export const users: User[] = [
 export const events: Event[] = [
   {
     id: "e1",
+<<<<<<< HEAD
     title: "Knockout Kings – Boxing Night",
     date: "2024-04-22",
     time: "19:00",
@@ -130,11 +157,30 @@ export const events: Event[] = [
     waiverRequired: true,
     description:
       "Friendly boxing competition with round-by-round judging. Show up early for safety checks and wrap inspections.",
+=======
+    title: "Warehouse Warriors 5",
+    date: "2024-04-18",
+    time: "19:00",
+    venue: "Forge Athletics - Private Warehouse",
+    visibility: "Unlisted",
+    rulesetDefault: "MMA",
+    status: "Published",
+    rsvpLimit: 80,
+    attendees: 57,
+    paid: true,
+    price: 25,
+    equipment: ["Mouthguards", "16oz Gloves", "Shin Guards", "Headgear (Beginner)"],
+    minAge: 18,
+    waiverRequired: true,
+    description:
+      "Invite-only fight night with emphasis on safety. All fighters must pass the equipment check and sign digital waivers.",
+>>>>>>> origin/main
     organizerId: "u1",
     featuredBoutId: "b1"
   },
   {
     id: "e2",
+<<<<<<< HEAD
     title: "Grappling Showcase",
     date: "2024-04-29",
     time: "17:00",
@@ -169,6 +215,23 @@ export const events: Event[] = [
     minAge: 18,
     waiverRequired: true,
     description: "Invite-only friendly MMA competition. All levels welcome with organizer-approved matchups only.",
+=======
+    title: "Sunday Roll-Off",
+    date: "2024-05-05",
+    time: "13:00",
+    venue: "Flow State BJJ Loft",
+    visibility: "Public",
+    rulesetDefault: "Grappling",
+    status: "Draft",
+    rsvpLimit: 64,
+    attendees: 22,
+    paid: false,
+    equipment: ["Grappling shorts", "Rashguards", "No heel hooks (Beginner)"],
+    minAge: 16,
+    waiverRequired: true,
+    description:
+      "Single elimination brackets with ELO leaderboard updates for every submission win.",
+>>>>>>> origin/main
     organizerId: "u1"
   }
 ];
@@ -181,17 +244,27 @@ export const bouts: Bout[] = [
     weightClass: "Lightweight",
     rounds: 3,
     roundLength: 3,
+<<<<<<< HEAD
     ruleset: "Boxing",
     redFighterId: "u2",
     blueFighterId: "u5",
     judges: ["u7"],
     status: "Confirmed",
     notes: "16oz gloves, no knockouts pursued, ref discretion for standing eight count.",
+=======
+    ruleset: "MMA",
+    redFighterId: "u2",
+    blueFighterId: "u3",
+    judges: ["u4"],
+    status: "Confirmed",
+    notes: "Friendly elbows off. Optional headgear.",
+>>>>>>> origin/main
     method: "Decision",
     result: "Red"
   },
   {
     id: "b2",
+<<<<<<< HEAD
     eventId: "e3",
     order: 2,
     weightClass: "Welterweight",
@@ -201,14 +274,31 @@ export const bouts: Bout[] = [
     redFighterId: "u3",
     blueFighterId: "u4",
     judges: ["u7"],
+=======
+    eventId: "e1",
+    order: 2,
+    weightClass: "Welterweight",
+    rounds: 3,
+    roundLength: 2,
+    ruleset: "Kickboxing",
+    redFighterId: "u3",
+    blueFighterId: "u2",
+    judges: ["u4"],
+>>>>>>> origin/main
     status: "Proposed"
   }
 ];
 
 export const scorecards: Scorecard[] = [
+<<<<<<< HEAD
   { boutId: "b1", judgeId: "u7", round: 1, red: 10, blue: 9 },
   { boutId: "b1", judgeId: "u7", round: 2, red: 10, blue: 9 },
   { boutId: "b1", judgeId: "u7", round: 3, red: 9, blue: 10, fouls: "Excessive clinch warning" }
+=======
+  { boutId: "b1", judgeId: "u4", round: 1, red: 10, blue: 9 },
+  { boutId: "b1", judgeId: "u4", round: 2, red: 9, blue: 10, fouls: "Grabbing cage warning" },
+  { boutId: "b1", judgeId: "u4", round: 3, red: 10, blue: 9 }
+>>>>>>> origin/main
 ];
 
 export const notifications: Notification[] = [
@@ -216,22 +306,34 @@ export const notifications: Notification[] = [
     id: "n1",
     message: "Kai Rivera accepted matchup vs Lena Hart.",
     type: "match",
+<<<<<<< HEAD
     date: "2024-03-21",
     link: "/matchmaking"
+=======
+    date: "2024-03-21"
+>>>>>>> origin/main
   },
   {
     id: "n2",
     message: "Warehouse Warriors 5 check-in opens in 2 hours.",
     type: "checkin",
+<<<<<<< HEAD
     date: "2024-03-22",
     link: "/events/e1"
+=======
+    date: "2024-03-22"
+>>>>>>> origin/main
   },
   {
     id: "n3",
     message: "Judge Marcus Le submitted b1 scorecard.",
     type: "result",
+<<<<<<< HEAD
     date: "2024-03-22",
     link: "/bouts/b1"
+=======
+    date: "2024-03-22"
+>>>>>>> origin/main
   }
 ];
 

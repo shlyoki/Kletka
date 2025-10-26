@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 "use client";
 
 import { useState } from "react";
 
 import { Toggle } from "@/components/toggle";
+=======
+import { Switch } from "@headlessui/react";
+import { useState } from "react";
+import { clsx } from "clsx";
+>>>>>>> origin/main
 
 export default function SettingsPage() {
   const [notifications, setNotifications] = useState(true);
@@ -68,7 +74,17 @@ function ToggleField({
         <p className="font-semibold text-white">{label}</p>
         <p className="text-xs text-white/50">{description}</p>
       </div>
+<<<<<<< HEAD
       <Toggle checked={value} onChange={onChange} />
+=======
+      <Switch
+        checked={value}
+        onChange={onChange}
+        className={clsx(value ? "bg-primary" : "bg-white/10", "relative inline-flex h-6 w-11 items-center rounded-full transition")}
+      >
+        <span className={clsx(value ? "translate-x-6" : "translate-x-1", "inline-block h-4 w-4 transform rounded-full bg-white transition")} />
+      </Switch>
+>>>>>>> origin/main
     </div>
   );
 }

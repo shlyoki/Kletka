@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+<<<<<<< HEAD
   images: {
     remotePatterns: [
       {
@@ -8,6 +9,10 @@ const nextConfig = {
         hostname: "images.unsplash.com"
       }
     ]
+=======
+  experimental: {
+    typedRoutes: true
+>>>>>>> origin/main
   }
 };
 
