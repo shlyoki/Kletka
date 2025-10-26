@@ -3,9 +3,11 @@ import path from 'path';
 import { randomUUID, randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { Role } from '@prisma/client';
 
-const DEFAULT_DB_PATH = path.join(process.cwd(), 'temp', 'mock-db.json');
+const DEFAULT_DB_PATH = process.env.VERCEL === '1'
+  ? path.join('/tmp', 'mock-db.json')
+  : path.join(process.cwd(), 'temp', 'mock-db.json');
 const DB_PATH = process.env.MFL_DB_PATH ? path.resolve(process.env.MFL_DB_PATH) : DEFAULT_DB_PATH;
-const FORCE_MEMORY = process.env.MFL_DB_MODE === 'memory' || process.env.VERCEL === '1';
+const FORCE_MEMORY = process.env.MFL_DB_MODE === 'memory';
 const READ_ONLY_CODES = new Set(['EROFS', 'EACCES']);
 const ITERATIONS = 120_000;
 const KEY_LENGTH = 32;
