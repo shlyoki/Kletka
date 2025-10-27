@@ -18,9 +18,10 @@ interface SWRResponse<Data> {
   mutate: (value?: Mutator<Data>, options?: { revalidate?: boolean }) => Promise<Data | undefined>;
 }
 
-interface SWROptions {
+interface SWROptions<Data = unknown> {
   revalidateOnFocus?: boolean;
   refreshInterval?: number;
+  fallbackData?: Data;
 }
 
 function notify(key: string) {
@@ -55,11 +56,20 @@ export async function mutate<Data = unknown>(
 export default function useSWR<Data = unknown>(
   key: Key,
   fetcher: Fetcher<Data>,
-  _options: SWROptions = {},
+  options: SWROptions<Data> = {},
 ): SWRResponse<Data> {
+  const { fallbackData } = options;
+
   const [data, setData] = useState<Data | undefined>(() => {
     if (!key) return undefined;
-    return cache.get(key) as Data | undefined;
+    if (cache.has(key)) {
+      return cache.get(key) as Data | undefined;
+    }
+    if (fallbackData !== undefined) {
+      cache.set(key, fallbackData);
+      return fallbackData;
+    }
+    return undefined;
   });
   const [error, setError] = useState<unknown>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(() => {
