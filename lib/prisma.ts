@@ -149,8 +149,8 @@ interface MediaItem {
 const users: User[] = [
   {
     id: 'user-organizer',
-    name: 'Olivia Organizer',
-    email: 'olivia@example.com',
+    name: 'Denis Dimdim',
+    email: 'denisdimdim@gmail.com',
     role: Role.ORGANIZER,
   },
   {

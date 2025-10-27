@@ -54,6 +54,15 @@ scripts/db-reset.sh # Convenience script for resetting the database
    ```
 6. Visit `http://localhost:3000`.
 
+### Seed owner login
+
+Use the seeded owner credentials to access organizer-only tooling:
+
+- Email: `denisdimdim@gmail.com`
+- Password: `Admin123`
+
+All newly created accounts begin as guests. Promote them from the **Members** screen once they have signed up.
+
 ## Available scripts
 - `pnpm dev` – start Next.js in development mode
 - `pnpm build` – production build

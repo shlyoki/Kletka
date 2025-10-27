@@ -75,7 +75,7 @@ export default async function OnboardingPage() {
             name="name"
             defaultValue={user.name}
             className="w-full rounded-2xl border border-white/10 bg-surface-muted/70 px-3 py-2 text-sm text-white"
-            placeholder="Olivia Organizer"
+            placeholder="Denis Dimdim"
           />
         </label>
         <label className="space-y-2 text-xs uppercase tracking-wide text-white/50">

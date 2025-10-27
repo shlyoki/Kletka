@@ -87,11 +87,11 @@ export function getSessionCookieName() {
 }
 
 function createDefaultOwner(): StoredUser {
-  const passwordHash = hashPassword('organizer123');
+  const passwordHash = hashPassword('Admin123');
   return {
     id: 'user-organizer',
-    name: 'Olivia Organizer',
-    email: 'olivia@example.com',
+    name: 'Denis Dimdim',
+    email: 'denisdimdim@gmail.com',
     passwordHash,
     role: Role.ORGANIZER,
     createdAt: new Date().toISOString(),
@@ -231,6 +231,47 @@ export async function createUser({
     onboarded: false,
     isOwner: false,
   };
+  db.users.push(user);
+  await writeDatabase(db);
+  return user;
+}
+
+export async function ownerCreateUser({
+  name,
+  email,
+  password,
+  role,
+  onboarded = role !== Role.GUEST,
+  region,
+  gym,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  role: Role;
+  onboarded?: boolean;
+  region?: string;
+  gym?: string;
+}) {
+  const db = await readDatabase();
+  const normalizedEmail = email.trim().toLowerCase();
+  if (db.users.some((existing) => existing.email.toLowerCase() === normalizedEmail)) {
+    throw new Error('Email is already registered.');
+  }
+
+  const user: StoredUser = {
+    id: randomUUID(),
+    name: name.trim(),
+    email: normalizedEmail,
+    passwordHash: hashPassword(password),
+    role,
+    createdAt: new Date().toISOString(),
+    onboarded: Boolean(onboarded),
+    isOwner: false,
+    region: region?.trim(),
+    gym: gym?.trim(),
+  };
+
   db.users.push(user);
   await writeDatabase(db);
   return user;

@@ -19,6 +19,7 @@ The app is a Next.js PWA with Tailwind for styling. All pages are optimized for 
 - **Bout management:** `/bouts/[id]` provides judge scorecards, waiver state, and coordination chat.
 - **Messaging:** `/messages` includes event-wide and bout-specific threads with profanity filter copy.
 - **Leaderboards:** `/leaderboards` highlights friendly ELO rankings by ruleset.
+- **Member management:** `/organizer/members` lets the owner promote guests and create new fighter, judge, or organizer accounts.
 - **Dashboard:** `/dashboard` summarizes approvals, incidents, exports, and payouts.
 
 ## Safety & compliance touchpoints

@@ -30,6 +30,7 @@ const navItems: Array<{ href: string; label: string; icon: IconComponent; ownerO
   { href: '/fighters', label: 'Fighters', icon: UsersIcon },
   { href: '/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
   { href: '/community', label: 'Community', icon: MegaphoneIcon },
+  { href: '/organizer/members', label: 'Members', icon: IdentificationIcon, ownerOnly: true },
   { href: '/organizer/analytics', label: 'Analytics', icon: ChartBarIcon, ownerOnly: true },
   { href: '/messages', label: 'Messages', icon: ChatBubbleLeftIcon },
   { href: '/media', label: 'Media', icon: FilmIcon },

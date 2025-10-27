@@ -2,9 +2,9 @@
   "users": [
     {
       "id": "user-organizer",
-      "name": "Olivia Organizer",
-      "email": "olivia@example.com",
-      "passwordHash": "78589c94e7eae09c6e6230e5fb8a03c9:03a7fc583576f6327a9820428c32e6abac689965f8e6cf330c81affdc07d5c0d",
+      "name": "Denis Dimdim",
+      "email": "denisdimdim@gmail.com",
+      "passwordHash": "13b6f82cd1a49d930a1b4d6ccc938d75:b89816860a8ce3ed33309743814853e1b79899df767a88362c12f329c660c6fc",
       "role": "ORGANIZER",
       "createdAt": "2024-01-01T12:00:00.000Z",
       "isOwner": true,
